@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Shift Tracker{% endblock %}</title>
+    <!-- Add your CSS and JS here -->
+</head>
+<body>
+    <header>
+        <nav>
+            {% if user.is_authenticated %}
+                <span>Welcome, {{ user.email }}</span>
+                <a href="{% url 'authentication:logout' %}">Logout</a>
+            {% else %}
+                <a href="{% url 'authentication:login' %}">Login</a>
+                <a href="{% url 'authentication:register' %}">Register</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <!-- Add your footer content -->
+    </footer>
+</body>
+</html>
