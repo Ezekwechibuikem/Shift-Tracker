@@ -45,8 +45,10 @@ def login_view(request):
                 return redirect('authentication:home') 
             else:
                 messages.error(request, "Invalid email or password.")
+                return render(request, 'authentication/login.html')
         else:
             messages.error(request, "Invalid email or password.")
+            return render(request, 'authentication/login.html')
     else:
         form = CustomAuthenticationForm()
     return render(request, 'authentication/login.html', {'form': form})
@@ -63,7 +65,7 @@ def home(request):
 
 
 def generate_otp():
-    """Generate a random 6-digit OTP"""
+    """ Generate a random 6-digit OTP """
     return ''.join(random.choices(string.digits, k=6))
 
 
@@ -103,7 +105,7 @@ def password_reset_request(request):
     return render(request, 'authentication/password_reset_request.html', {'form': form})
 
 def verify_otp(request):
-    """Verify the OTP entered by user"""
+    """ Verify the OTP entered by user """
     if 'reset_user_id' not in request.session:
         messages.error(request, 'Please start password reset process again.')
         return redirect('authentication:password_reset_request')

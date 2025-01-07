@@ -1,0 +1,7 @@
+&lt;!-- required files --&gt;
+&lt;script src="../assets/plugins/ckeditor/ckeditor.js"&gt;&lt;/script&gt;
+
+&lt;!-- html --&gt;
+&lt;textarea class="ckeditor" id="editor1" name="editor1" rows="20"&gt;
+ ...
+&lt;/textarea&gt;

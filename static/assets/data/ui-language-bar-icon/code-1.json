@@ -1,0 +1,5 @@
+&lt;!-- required files --&gt;
+&lt;link href="../assets/plugins/flag-icon-css/css/flag-icons.min.css" rel="stylesheet" /&gt;
+
+&lt;!-- html --&gt;
+&lt;div class="flag-icon flag-icon-ad" title="ad"&gt;&lt;/div&gt;

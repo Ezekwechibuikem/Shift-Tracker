@@ -1,9 +1,11 @@
-<!-- templates/authentication/home.html -->
 {% extends 'base.html' %}
 
 {% block content %}
 <div class="container">
     {% if user.is_authenticated %}
+    {% if perms.authentication.can_manage_team_shifts %}
+        <p>lets test and see how it works</p>
+    {% endif %}
         <div class="dashboard">
             <h1>Welcome, {{ user.last_name }} {{ user.first_name }}</h1>
             
@@ -25,10 +27,10 @@
                 </div>
             {% endif %}
             
-            <!-- Regular user content -->
+          
             <div class="user-section">
                 <h2>Your Dashboard</h2>
-                <!-- Add your dashboard content here -->
+               
             </div>
             
             <div class="logout-section">

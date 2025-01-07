@@ -77,7 +77,7 @@ class PasswordResetRequestForm(forms.Form):
         return email
 
 class OTPVerificationForm(forms.Form):
-    """Form for verifying OTP"""
+    """ Form for verifying OTP """
     otp = forms.CharField(
         label='Enter OTP',
         max_length=6,

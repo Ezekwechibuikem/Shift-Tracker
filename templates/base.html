@@ -1,41 +1,275 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Shift Tracker{% endblock %}</title>
-    <!-- Add your CSS and JS here -->
+	<meta charset="utf-8" />
+	<title>Staff Tracker {% block title %}{% endblock %}</title>
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+	<meta content="" name="description" />
+	<meta content="" name="author" />
+	
+	<!-- ================== BEGIN core-css ================== -->
+	<link href="{% static 'assets/css/vendor.min.css' %}" rel="stylesheet" />
+	<link href="{% static 'assets/css/default/app.min.css' %}" rel="stylesheet" />
+	<!-- ================== END core-css ================== -->
+	
+	<!-- ================== BEGIN page-css ================== -->
+	<link href="{% static 'assets/plugins/jvectormap-next/jquery-jvectormap.css' %}" rel="stylesheet" />
+	<link href="{% static 'assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.css' %}" rel="stylesheet" />
+	<link href="{% static 'assets/plugins/gritter/css/jquery.gritter.css' %}" rel="stylesheet" />
+	<!-- ================== END page-css ================== -->
 </head>
 <body>
-    <header>
-        <nav>
-            {% if user.is_authenticated %}
-                <span>Welcome, {{ user.email }}</span>
-                <a href="{% url 'authentication:logout' %}">Logout</a>
-            {% else %}
-                <a href="{% url 'authentication:login' %}">Login</a>
-                <a href="{% url 'authentication:register' %}">Register</a>
-            {% endif %}
-        </nav>
-    </header>
+	<!-- BEGIN #loader -->
+	<div id="loader" class="app-loader">
+		<span class="spinner"></span>
+	</div>
+	<!-- END #loader -->
 
-    <main>
-        {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
+	<!-- BEGIN #app -->
+	<div id="app" class="app app-header-fixed app-sidebar-fixed ">
+		<!-- BEGIN #header -->
+		<div id="header" class="app-header">
+			<!-- BEGIN navbar-header -->
+			<div class="navbar-header">
+				<a href="index.html" class="navbar-brand"><span class="navbar-logo"></span> <b class="me-3px">Shift</b> Tracker</a>
+				<button type="button" class="navbar-mobile-toggler" data-toggle="app-sidebar-mobile">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+			</div>
+			<!-- END navbar-header -->
+			<!-- BEGIN header-nav -->
+			<div class="navbar-nav">
+				<div class="navbar-item navbar-form">
+					<form action="" method="POST" name="search">
+						<div class="form-group">
+							<input type="text" class="form-control" placeholder="Enter keyword" />
+							<button type="submit" class="btn btn-search"><i class="fa fa-search"></i></button>
+						</div>
+					</form>
+				</div>
+				<div class="navbar-item dropdown">
+					<a href="#" data-bs-toggle="dropdown" class="navbar-link dropdown-toggle icon">
+						<i class="fa fa-bell"></i>
+						<span class="badge">5</span>
+					</a>
+				</div>
+				<div class="navbar-item navbar-user dropdown">
+					<a href="#" class="navbar-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+						<span>
+							<span class="d-none d-md-inline"><b>{{ user.last_name }} {{ user.first_name }}</b></span>
+							<b class="caret"></b>
+						</span>
+					</a>
+					<div class="dropdown-menu dropdown-menu-end me-1">
+						<a href="extra_profile.html" class="dropdown-item">Edit Profile</a>
+						<a href="email_inbox.html" class="dropdown-item d-flex align-items-center">
+							Inbox
+							<span class="badge bg-danger rounded-pill ms-auto pb-4px">2</span> 
+						</a>
+						<a href="settings.html" class="dropdown-item">Settings</a>
+						<div class="dropdown-divider"></div>
+						<a href="{% url 'authentication:logout' %}" class="dropdown-item">Log Out</a>
+					</div>
+				</div>
+			</div>
+			<!-- END header-nav -->
+		</div>
+		<!-- END #header -->
+	
+		<!-- BEGIN #sidebar -->
+		<div id="sidebar" class="app-sidebar" data-bs-theme="dark">
+			<!-- BEGIN scrollbar -->
+			<div class="app-sidebar-content" data-scrollbar="true" data-height="100%">
+				<!-- BEGIN menu -->
+				<div class="menu">
+					<div class="menu-profile">
+						<a href="javascript:;" class="menu-profile-link" data-toggle="app-sidebar-profile" data-target="#appSidebarProfileMenu">
+							<div class="menu-profile-cover with-shadow"></div>
+							<div class="menu-profile-image">
+								<img src="{% static 'assets/img/user/user-13.jpg' %}" alt="" />
+							</div>
+							<div class="menu-profile-info">
+								<div class="d-flex align-items-center">
+									<div class="flex-grow-1">
+										{{ user.last_name }} {{ user.first_name }}
+									</div>
+									<div class="menu-caret ms-auto"></div>
+								</div>
+								<small>{{ user.role }}</small>
+							</div>
+						</a>
+					</div>
+					<div id="appSidebarProfileMenu" class="collapse">
+						<div class="menu-item pt-5px">
+							<a href="javascript:;" class="menu-link">
+								<div class="menu-icon"><i class="fa fa-cog"></i></div>
+								<div class="menu-text">Settings</div>
+							</a>
+						</div>
+						<div class="menu-item">
+							<a href="javascript:;" class="menu-link">
+								<div class="menu-icon"><i class="fa fa-pencil-alt"></i></div>
+								<div class="menu-text"> Send Feedback</div>
+							</a>
+						</div>
+						<div class="menu-item pb-5px">
+							<a href="javascript:;" class="menu-link">
+								<div class="menu-icon"><i class="fa fa-question-circle"></i></div>
+								<div class="menu-text"> Helps</div>
+							</a>
+						</div>
+						<div class="menu-divider m-0"></div>
+					</div>
+					<div class="menu-header">Navigation</div>
+					<div class="menu-item has-sub active">
+						<a href="javascript:;" class="menu-link">
+							<div class="menu-icon">
+								<i class="fa fa-sitemap"></i>							</div>
+							<div class="menu-text">Dashboard</div>
+							<div class="menu-caret"></div>
+						</a>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="javascript:;" class="menu-link">
+							<div class="menu-icon">
+								<i class="fa fa-hdd"></i>
+							</div>
+							<div class="menu-text">Email</div>
+							<div class="menu-badge">10</div>
+						</a>
+					</div>
+					<!-- BEGIN minify-button -->
+					<div class="menu-item d-flex">
+						<a href="javascript:;" class="app-sidebar-minify-btn ms-auto d-flex align-items-center text-decoration-none" data-toggle="app-sidebar-minify"><i class="fa fa-angle-double-left"></i></a>
+					</div>
+					<!-- END minify-button -->
+				</div>
+				<!-- END menu -->
+			</div>
+			<!-- END scrollbar -->
+		</div>
+		<div class="app-sidebar-bg" data-bs-theme="dark"></div>
+		<div class="app-sidebar-mobile-backdrop"><a href="#" data-dismiss="app-sidebar-mobile" class="stretched-link"></a></div>
+		<!-- END #sidebar -->
+		
+		<!-- BEGIN #content -->
+		<div id="content" class="app-content">
+			<!-- BEGIN breadcrumb -->
+			<ol class="breadcrumb float-xl-end">
+				<li class="breadcrumb-item"><a href="javascript:;">Home</a></li>
+				<li class="breadcrumb-item active">Dashboard</li>
+			</ol>
+			<!-- END breadcrumb -->
+			<!-- BEGIN page-header -->
+			<h1 class="page-header">Dashboard <small>header small text goes here...</small></h1>
+			<!-- END page-header -->
+			
+			<!-- BEGIN row -->
+			<div class="row">
+				<!-- BEGIN col-3 -->
+				<div class="col-xl-3 col-md-6">
+					<div class="widget widget-stats bg-blue">
+						<div class="stats-icon"><i class="fa fa-desktop"></i></div>
+						<div class="stats-info">
+							<h4>TOTAL VISITORS</h4>
+							<p>3,291,922</p>	
+						</div>
+						<div class="stats-link">
+							<a href="javascript:;">View Detail <i class="fa fa-arrow-alt-circle-right"></i></a>
+						</div>
+					</div>
+				</div>
+				<!-- END col-3 -->
+				<!-- BEGIN col-3 -->
+				<div class="col-xl-3 col-md-6">
+					<div class="widget widget-stats bg-info">
+						<div class="stats-icon"><i class="fa fa-link"></i></div>
+						<div class="stats-info">
+							<h4>BOUNCE RATE</h4>
+							<p>20.44%</p>	
+						</div>
+						<div class="stats-link">
+							<a href="javascript:;">View Detail <i class="fa fa-arrow-alt-circle-right"></i></a>
+						</div>
+					</div>
+				</div>
+				<!-- END col-3 -->
+				<!-- BEGIN col-3 -->
+				<div class="col-xl-3 col-md-6">
+					<div class="widget widget-stats bg-orange">
+						<div class="stats-icon"><i class="fa fa-users"></i></div>
+						<div class="stats-info">
+							<h4>UNIQUE VISITORS</h4>
+							<p>1,291,922</p>	
+						</div>
+						<div class="stats-link">
+							<a href="javascript:;">View Detail <i class="fa fa-arrow-alt-circle-right"></i></a>
+						</div>
+					</div>
+				</div>
+				<!-- END col-3 -->
+				<!-- BEGIN col-3 -->
+				<div class="col-xl-3 col-md-6">
+					<div class="widget widget-stats bg-red">
+						<div class="stats-icon"><i class="fa fa-clock"></i></div>
+						<div class="stats-info">
+							<h4>AVG TIME ON SITE</h4>
+							<p>00:12:23</p>	
+						</div>
+						<div class="stats-link">
+							<a href="javascript:;">View Detail <i class="fa fa-arrow-alt-circle-right"></i></a>
+						</div>
+					</div>
+				</div>
+				<!-- END col-3 -->
+			</div>
+			<!-- END row -->
+			
+		</div>
+		<!-- END #content -->
+		
+		<!-- BEGIN scroll-top-btn -->
+		<a href="javascript:;" class="btn btn-icon btn-circle btn-theme btn-scroll-to-top" data-toggle="scroll-to-top"><i class="fa fa-angle-up"></i></a>
+		<!-- END scroll-top-btn -->
+	</div>
+	<!-- END #app -->
+	
+	<!-- ================== BEGIN core-js ================== -->
+    <script src="{% static 'assets/js/vendor.min.js' %}"></script>
+    <script src="{% static 'assets/js/app.min.js' %}"></script>
+    <!-- ================== END core-js ================== -->
 
-        {% block content %}
-        {% endblock %}
-    </main>
+    <!-- ================== BEGIN page-js ================== -->
+    <script src="{% static 'assets/plugins/gritter/js/jquery.gritter.js' %}"></script>
+    <script src="{% static 'assets/plugins/flot/source/jquery.canvaswrapper.js' %}"></script>
+    <script src="{% static 'assets/plugins/flot/source/jquery.colorhelpers.js' %}"></script>
+    <script src="{% static 'assets/plugins/flot/source/jquery.flot.js' %}"></script>
+    <script src="{% static 'assets/plugins/flot/source/jquery.flot.saturated.js' %}"></script>
+    <script src="{% static 'assets/plugins/flot/source/jquery.flot.browser.js' %}"></script>
+    <script src="{% static 'assets/plugins/flot/source/jquery.flot.drawSeries.js' %}"></script>
+    <script src="{% static 'assets/plugins/flot/source/jquery.flot.uiConstants.js' %}"></script>
+    <script src="{% static 'assets/plugins/flot/source/jquery.flot.time.js' %}"></script>
+    <script src="{% static 'assets/plugins/flot/source/jquery.flot.resize.js' %}"></script>
+    <script src="{% static 'assets/plugins/flot/source/jquery.flot.pie.js' %}"></script>
+    <script src="{% static 'assets/plugins/flot/source/jquery.flot.crosshair.js' %}"></script>
+    <script src="{% static 'assets/plugins/flot/source/jquery.flot.categories.js' %}"></script>
+    <script src="{% static 'assets/plugins/flot/source/jquery.flot.navigate.js' %}"></script>
+    <script src="{% static 'assets/plugins/flot/source/jquery.flot.touchNavigate.js' %}"></script>
+    <script src="{% static 'assets/plugins/flot/source/jquery.flot.hover.js' %}"></script>
+    <script src="{% static 'assets/plugins/flot/source/jquery.flot.touch.js' %}"></script>
+    <script src="{% static 'assets/plugins/flot/source/jquery.flot.selection.js' %}"></script>
+    <script src="{% static 'assets/plugins/flot/source/jquery.flot.symbol.js' %}"></script>
+    <script src="{% static 'assets/plugins/flot/source/jquery.flot.legend.js' %}"></script>
+    <script src="{% static 'assets/plugins/jquery-sparkline/jquery.sparkline.min.js' %}"></script>
+    <script src="{% static 'assets/plugins/jvectormap-next/jquery-jvectormap.min.js' %}"></script>
+    <script src="{% static 'assets/plugins/jvectormap-content/world-mill.js' %}"></script>
 
-    <footer>
-        <!-- Add your footer content -->
-    </footer>
+
+	<script src="{% static 'assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.js' %}"></script>
+	<script src="{% static 'assets/js/demo/dashboard.js' %}"></script>
+	<!-- ================== END page-js ================== -->
 </body>
 </html>
