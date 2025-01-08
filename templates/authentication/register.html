@@ -1,11 +1,11 @@
-{% extends "base.html" %}
+{% extends "flow/base.html" %}
 
 {% block title %}Register{% endblock %}
 
 {% block content %}
 <div class="form-container">
     <h2>Register</h2>
-    <form method="post">
+    <form method="post" autocomplete="off">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Register</button>

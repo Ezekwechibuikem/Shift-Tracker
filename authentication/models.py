@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser, BaseUserManager, Group, Permission
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
 class CustomUserManager(BaseUserManager):
@@ -28,6 +28,7 @@ class CustomUserManager(BaseUserManager):
     def create_superuser(self, email, first_name, last_name, department='Admin', unit='Admin', password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('role', 'ADMIN')  # Set default role for superuser
         
         if extra_fields.get('is_staff') is not True:
             raise ValueError('Superuser must have is_staff=True.')
@@ -46,9 +47,17 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractUser):
     ROLE_CHOICES = (
-        ('admin', 'Admin'),
-        ('supervisor', 'Supervisor'),
-        ('staff', 'Staff'),
+        ('ADMIN', 'Admin'),
+        ('SUPERVISOR', 'Supervisor'),
+        ('STAFF', 'Staff'),
+    )
+    TEAM_CHOICES = (
+        ('TEAM0', 'Team 0'),
+        ('TEAM1', 'Team 1'),
+        ('TEAM2', 'Team 2'),
+        ('TEAM3', 'Team 3'),
+        ('TEAM4', 'Team 4'),
+        ('TEAM5', 'Team 5'),
     )
     username = None
     email = models.EmailField(unique=True)
@@ -56,20 +65,8 @@ class CustomUser(AbstractUser):
     last_name = models.CharField(max_length=30)
     department = models.CharField(max_length=50)
     unit = models.CharField(max_length=50)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='admin')
-    
-    groups = models.ManyToManyField(
-        Group,
-        verbose_name='groups',
-        blank=True,
-        related_name='custom_users'
-    )
-    user_permissions = models.ManyToManyField(
-        Permission,
-        verbose_name='user permissions',
-        blank=True,
-        related_name='custom_users'
-    )
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='STAFF')
+    team = models.CharField(max_length=20, choices=TEAM_CHOICES, null=True, blank=True, default='Team 0')
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
@@ -79,6 +76,16 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return f"{self.first_name} {self.last_name} <{self.email}>"
     
+    # Helper methods for role-based checks
+    def is_admin(self):
+        return self.role == 'ADMIN' or self.is_superuser
+    
+    def is_supervisor(self):
+        return self.role == 'SUPERVISOR'
+    
+    def is_staff_member(self):
+        return self.role == 'STAFF'
+
 class PasswordResetOTP(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     otp = models.CharField(max_length=6)

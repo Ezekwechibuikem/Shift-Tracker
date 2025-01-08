@@ -4,3 +4,4 @@
 
 - Started the development on 20th of Dec 2024. 
 - Work in progress.
+- Proposed day for MVP presentation is on 10th od Jan 2025.

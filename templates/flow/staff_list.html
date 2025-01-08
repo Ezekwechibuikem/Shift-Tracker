@@ -1,0 +1,35 @@
+{% extends 'flow/base.html' %} 
+
+{% block content %}
+<div class="container">
+    <h2>Staff List</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Unit</th>
+                <th>Role</th>
+                <th>Team</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for staff in staff_members %}
+            <tr>
+                <td>{{ staff.first_name }} {{ staff.last_name }}</td>
+                <td>{{ staff.email }}</td>
+                <td>{{ staff.department }}</td>
+                <td>{{ staff.unit }}</td>
+                <td>{{ staff.get_role_display }}</td>
+                <td>{{ staff.get_team_display|default:"-" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No staff members found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

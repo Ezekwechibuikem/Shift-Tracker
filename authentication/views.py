@@ -17,16 +17,13 @@ def register_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            role = form.cleaned_data['role']
-            group = Group.objects.get(name=role.capitalize())
-            user.groups.add(group)
-            if role == 'admin':
+            user = form.save()  
+            if user.role == 'ADMIN':
                 user.is_staff = True
                 user.save()
             auth_login(request, user)
             messages.success(request, "Registration successful.")
-            return redirect('authentication:login') 
+            return redirect('authentication:home') 
         messages.error(request, "Unsuccessful registration. Invalid information.")
     else:
         form = CustomUserCreationForm()
@@ -61,7 +58,7 @@ def logout_view(request):
 
 @login_required
 def home(request):
-    return render(request, 'authentication/home.html')
+    return render(request, 'flow/home.html')
 
 
 def generate_otp():
@@ -154,3 +151,10 @@ def set_new_password(request):
         form = SetNewPasswordForm()
     
     return render(request, 'authentication/set_new_password.html', {'form': form})
+
+
+
+@login_required
+def staff_list(request):
+    staff_members = CustomUser.objects.all().order_by('last_name')
+    return render(request, 'flow/staff_list.html', {'staff_members': staff_members})

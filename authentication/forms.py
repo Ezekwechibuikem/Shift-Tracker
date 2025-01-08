@@ -28,10 +28,13 @@ class CustomUserCreationForm(UserCreationForm):
     role = forms.ChoiceField(choices=CustomUser.ROLE_CHOICES, required=True, widget=forms.Select(attrs={
             'class': 'form-control', 'placeholder': 'Select role'
     }))
+    team = forms.ChoiceField(choices=CustomUser.TEAM_CHOICES, required=True, widget=forms.Select(attrs={
+            'class': 'form-control', 'placeholder': 'Select team'
+    }))
     
     class Meta:
         model = CustomUser
-        fields = ('email', 'first_name', 'last_name', 'department', 'unit', 'role', 'password1', 'password2')
+        fields = ('email', 'first_name', 'last_name', 'department', 'unit', 'role', 'team', 'password1', 'password2')
 
     def clean_email(self):
         email = self.cleaned_data.get('email').lower()

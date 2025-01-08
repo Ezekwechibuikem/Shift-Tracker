@@ -1,0 +1,116 @@
+{% load static %}
+
+
+<!-- BEGIN scrollbar -->
+<div class="app-sidebar-content" data-scrollbar="true" data-height="100%">
+    <!-- BEGIN menu -->
+    <div class="menu">
+        <div class="menu-profile">
+            <a href="javascript:;" class="menu-profile-link" data-toggle="app-sidebar-profile" data-target="#appSidebarProfileMenu">
+                <div class="menu-profile-cover with-shadow"></div>
+                <div class="menu-profile-image">
+                    <img src="{% static 'assets/img/user/user-13.jpg' %}" alt="" />
+                </div>
+                <div class="menu-profile-info">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            {{ user.last_name }} {{ user.first_name }}
+                        </div>
+                        <div class="menu-caret ms-auto"></div>
+                    </div>
+                    <small>{{ user.role }}</small>
+                </div>
+            </a>
+        </div>
+        <div id="appSidebarProfileMenu" class="collapse">
+            {% if user.is_admin %}
+                <div class="menu-item pt-5px">
+                    <a href="{% url 'authentication:staff_list' %}" class="menu-link">
+                        <div class="menu-icon"><i class="fa fa-user-alt"></i></div>
+                        <div class="menu-text">All Staff</div>
+                    </a>
+                </div>
+            {% endif %}
+            {% if user.is_admin %}
+                <div class="menu-item pb-5px">
+                    <a href="{% url 'authentication:register' %}" class="menu-link">
+                        <div class="menu-icon"><i class="fa fa-user-alt"></i></div>
+                        <div class="menu-text">Register user</div>
+                    </a>
+                </div>
+            {% endif %}
+            {% if user.is_supervisor or user.is_admin %}
+                <div class="menu-item">
+                    <a href="javascript:;" class="menu-link">
+                        <div class="menu-icon"><i class="fa fa-pencil-alt"></i></div>
+                        <div class="menu-text">Staff Report</div>
+                    </a>
+                </div>
+            {% endif %}
+            {% if user.is_supervisor or user.is_staff_member %}
+                <div class="menu-item pb-5px">
+                    <a href="javascript:;" class="menu-link">
+                        <div class="menu-icon"><i class="fa fa-question-circle"></i></div>
+                        <div class="menu-text">Report</div>
+                    </a>
+                </div>
+            {% endif %}
+            <div class="menu-divider m-0"></div>
+        </div>
+        <div class="menu-header">Overview</div>
+        <div class="menu-item has-sub active">
+            <a href="javascript:;" class="menu-link">
+                <div class="menu-icon">
+                    <i class="fa fa-sitemap"></i>							</div>
+                <div class="menu-text">Dashboard</div>
+                {% comment %} <div class="menu-caret"></div> {% endcomment %}
+            </a>
+        </div>
+        <div class="menu-item has-sub">
+            <a href="javascript:;" class="menu-link">
+                <div class="menu-icon">
+                    <i class="fa fa-envelope"></i>
+                </div>
+                <div class="menu-text">Email</div>
+                <div class="menu-badge">10</div>
+            </a>
+        </div>
+        <div class="menu-item has-sub">
+            <a href="#" class="menu-link">
+                <div class="menu-icon">
+                    <i class="fa fa-question-circle"></i>
+                </div>
+                <div class="menu-text">Help</div>
+            </a>
+        </div>
+        <div class="menu-item has-sub">
+            <a href="javascript:;" class="menu-link">
+                <div class="menu-icon">
+                    <i class="fa fa-hdd"></i>
+                </div>
+                <div class="menu-text">FAQ</div>
+            </a>
+        </div>
+        <div class="menu-header">Administrative</div>
+        <div class="menu-item has-sub">
+            <a href="javascript:;" class="menu-link">
+                <div class="menu-icon">
+                    <i class="fa fa-cogs"></i>
+                </div>
+                <div class="menu-text">Admin Support</div>
+            </a>
+        </div>
+
+        <!-- BEGIN minify-button -->
+        <div class="menu-item d-flex">
+            <a href="javascript:;" class="app-sidebar-minify-btn ms-auto d-flex align-items-center text-decoration-none" data-toggle="app-sidebar-minify"><i class="fa fa-angle-double-left"></i></a>
+        </div>
+        <!-- END minify-button -->
+
+        <div id="footer" class="app-footer m-0" style="text-align: left; position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px 20px; background-color: #fff; border-top: 1px solid #dee2e6; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);">
+            &copy; {% now "Y" %} JAY & OAKS. All right reserved <span style="float: right;">v1.0.0</span>
+        </div>
+    </div>
+    <!-- END menu -->
+</div>
+<!-- END scrollbar -->
