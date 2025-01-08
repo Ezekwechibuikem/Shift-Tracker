@@ -58,8 +58,8 @@
             <div class="menu-divider m-0"></div>
         </div>
         <div class="menu-header">Overview</div>
-        <div class="menu-item has-sub active">
-            <a href="javascript:;" class="menu-link">
+        <div class="menu-item ">
+            <a href="{% url 'authentication:home' %}"class="menu-link">
                 <div class="menu-icon">
                     <i class="fa fa-sitemap"></i>							</div>
                 <div class="menu-text">Dashboard</div>
@@ -75,8 +75,8 @@
                 <div class="menu-badge">10</div>
             </a>
         </div>
-        <div class="menu-item has-sub">
-            <a href="#" class="menu-link">
+        <div class="menu-item">
+            <a href="{% url 'authentication:intro' %}" class="menu-link">
                 <div class="menu-icon">
                     <i class="fa fa-question-circle"></i>
                 </div>
@@ -91,6 +91,7 @@
                 <div class="menu-text">FAQ</div>
             </a>
         </div>
+        {% if user.is_admin %}
         <div class="menu-header">Administrative</div>
         <div class="menu-item has-sub">
             <a href="javascript:;" class="menu-link">
@@ -100,6 +101,7 @@
                 <div class="menu-text">Admin Support</div>
             </a>
         </div>
+        {% endif %}
 
         <!-- BEGIN minify-button -->
         <div class="menu-item d-flex">

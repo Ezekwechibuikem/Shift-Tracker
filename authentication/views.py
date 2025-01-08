@@ -1,5 +1,5 @@
 from django.contrib.auth import login as auth_login, logout
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -59,6 +59,10 @@ def logout_view(request):
 @login_required
 def home(request):
     return render(request, 'flow/home.html')
+
+@login_required
+def intro(request):
+    return render(request, 'flow/intro.html')
 
 
 def generate_otp():
@@ -158,3 +162,11 @@ def set_new_password(request):
 def staff_list(request):
     staff_members = CustomUser.objects.all().order_by('last_name')
     return render(request, 'flow/staff_list.html', {'staff_members': staff_members})
+
+@login_required
+def profile(request):
+    display_profile = request.user
+    context = {
+        'display_profile': display_profile
+    }
+    return render(request, 'flow/profile.html', context)

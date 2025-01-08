@@ -1,0 +1,25 @@
+{% extends 'flow/base.html' %} 
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h3>My Profile</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Name:</strong> {{ display_profile.first_name }} {{ display_profile.last_name }}</p>
+                    <p><strong>Email:</strong> {{ display_profile.email }}</p>
+                    <p><strong>Department:</strong> {{ display_profile.department }}</p>
+                    <p><strong>Unit:</strong> {{ display_profile.unit }}</p>
+                    <p><strong>Role:</strong> {{ display_profile.get_role_display }}</p>
+                    {% if display_profile.team %}
+                        <p><strong>Team:</strong> {{ display_profile.get_team_display }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
