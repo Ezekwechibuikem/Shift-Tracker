@@ -1,0 +1,96 @@
+
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+	<title>Staff Tracker {% block title %}{% endblock %}</title>
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+	<meta content="" name="description" />
+	<meta content="" name="author" />
+	
+	<!-- ================== BEGIN core-css ================== -->
+	<link href="{% static 'assets/css/vendor.min.css' %}" rel="stylesheet" />
+	<link href="{% static 'assets/css/default/app.min.css' %}" rel="stylesheet" />
+	<!-- ================== END core-css ================== -->
+</head>
+<body class='pace-top'>
+	<!-- BEGIN #loader -->
+	<div id="loader" class="app-loader">
+		<span class="spinner"></span>
+	</div>
+	<!-- END #loader -->
+	<!-- BEGIN #app -->
+	<div id="app" class="app">
+		<!-- BEGIN login -->
+		<div class="login login-v2 fw-bold">
+			<!-- BEGIN login-cover -->
+			<div class="login-cover">
+                <div class="login-cover-img" style="background-image: url({% static 'assets/img/login-bg/login-bg-17.jpg' %})" data-id="login-cover-image"></div>
+                <div class="login-cover-bg"></div>
+            </div>
+			<!-- END login-cover -->
+			
+			<!-- BEGIN login-container -->
+            <div class="login-container" style="display: flex; justify-content: flex-start; align-items: center; min-height: 100vh;">
+                <!-- BEGIN login-header -->
+                <div class="login-header" style="text-align: left; width: 100%; max-width: 600px; margin-left: 40px;">
+                    <div class="brand">
+                        <div class="d-flex align-items-center" style="flex-direction: column;">
+                            <span class="logo" style="margin-bottom: 20px;"></span>
+                            <b style="font-size: 32px; margin-bottom: 30px;">ADMIN</b>
+                            <div style="padding: 20px; border-radius: 10px; font-family: Arial, sans-serif; color: white; background-color: #303030;">
+                                <div style="padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                    <h2 style="color: #ffffff; margin-bottom: 20px; text-align: center; font-size: 24px;">Admin Contact</h2>
+                                    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                                        <tbody>
+                                            <tr style="border-bottom: 1px solid #404040;">
+                                                <td style="padding: 12px 15px; color: #a0a0a0; width: 150px; font-weight: bold;">Department</td>
+                                                <td style="padding: 12px 15px; color: #ffffff;">{{ contact.department }}</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #404040;">
+                                                <td style="padding: 12px 15px; color: #a0a0a0; width: 150px; font-weight: bold;">Name</td>
+                                                <td style="padding: 12px 15px; color: #ffffff;">{{ contact.name }}</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #404040;">
+                                                <td style="padding: 12px 15px; color: #a0a0a0; width: 150px; font-weight: bold;">Phone</td>
+                                                <td style="padding: 12px 15px; color: #ffffff;">{{ contact.phone }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 12px 15px; color: #a0a0a0; width: 150px; font-weight: bold;">Email</td>
+                                                <td style="padding: 12px 15px;">
+                                                    <a href="mailto:{{ contact.email }}" style="color: #4CAF50; text-decoration: none; font-weight: bold;">{{ contact.email }}</a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- END login-header -->
+            </div>
+			<!-- END login-container -->
+		</div>
+		<!-- END login -->
+		
+		<!-- BEGIN scroll-top-btn -->
+		<a href="javascript:;" class="btn btn-icon btn-circle btn-theme btn-scroll-to-top" data-toggle="scroll-to-top"><i class="fa fa-angle-up"></i></a>
+		<!-- END scroll-top-btn -->
+	</div>
+	<!-- END #app -->
+	
+    <!-- ================== BEGIN core-js ================== -->
+    <script src="{% static 'assets/js/vendor.min.js' %}"></script>
+    <script src="{% static 'assets/js/app.min.js' %}"></script>
+    <!-- ================== END core-js ================== -->
+        
+	<!-- ================== BEGIN page-js ================== -->
+	{% comment %} <script src="{% static 'assets/js/demo/login-v2.demo.js' %}"></script> {% endcomment %}
+	<!-- ================== END page-js ================== -->
+</body>
+</html>
+

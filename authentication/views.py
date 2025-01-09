@@ -170,3 +170,14 @@ def profile(request):
         'display_profile': display_profile
     }
     return render(request, 'flow/profile.html', context)
+
+def admin_contact(request):
+    context = {
+        'contact': {
+            'name': 'Admin Support',
+            'email': 'ezekwechibuikem@gmail.com',
+            'phone': '+234 8107285275',
+            'department': 'Technical support'
+        }
+    }
+    return render(request, 'flow/admin_contact.html', context)
