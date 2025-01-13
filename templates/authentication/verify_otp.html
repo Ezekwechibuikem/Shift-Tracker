@@ -1,25 +1,72 @@
-{% extends 'base.html' %}
+{% load static %}
 
-{% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="text-center">Verify OTP</h3>
-                </div>
-                <div class="card-body">
-                    <p class="text-center">Please enter the OTP sent to your email.</p>
-                    <form method="post">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <button type="submit" class="btn btn-primary w-100">Verify OTP</button>
-                    </form>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+	<title>Staff Tracker {% block title %}{% endblock %}</title>
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+	<meta content="" name="description" />
+	<meta content="" name="author" />
+	
+	<!-- ================== BEGIN core-css ================== -->
+	<link href="{% static 'assets/css/vendor.min.css' %}" rel="stylesheet" />
+	<link href="{% static 'assets/css/default/app.min.css' %}" rel="stylesheet" />
+	<!-- ================== END core-css ================== -->
+</head>
+<body class='pace-top'>
+	<!-- BEGIN #loader -->
+	<div id="loader" class="app-loader">
+		<span class="spinner"></span>
+	</div>
+	<!-- END #loader -->
+
+	
+	<!-- BEGIN #app -->
+	<div id="app" class="app">
+		<!-- BEGIN login -->
+		<div class="login login-v2 fw-bold">
+			<!-- BEGIN login-cover -->
+			<div class="login-cover">
+                <div class="login-cover-img" style="background-image: url({% static 'assets/img/login-bg/login-bg-17.jpg' %})" data-id="login-cover-image"></div>
+                <div class="login-cover-bg"></div>
+            </div>
+			<!-- END login-cover -->
+                <div class="container mt-5">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="text-center">Verify OTP</h3>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-center">Please enter the OTP sent to your email.</p>
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        {{ form.as_p }}
+                                        <button type="submit" class="btn btn-primary w-100">Verify OTP</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+            <!-- END login -->
+            
+            <!-- BEGIN scroll-top-btn -->
+            <a href="javascript:;" class="btn btn-icon btn-circle btn-theme btn-scroll-to-top" data-toggle="scroll-to-top"><i class="fa fa-angle-up"></i></a>
+            <!-- END scroll-top-btn -->
         </div>
-    </div>
-</div>
-{% endblock %}
+        <!-- END #app -->
+        <!-- ================== BEGIN core-js ================== -->
+        <script src="{% static 'assets/js/vendor.min.js' %}"></script>
+        <script src="{% static 'assets/js/app.min.js' %}"></script>
+        <!-- ================== END core-js ================== -->
+            
+        <!-- ================== BEGIN page-js ================== -->
+        {% comment %} <script src="{% static 'assets/js/demo/login-v2.demo.js' %}"></script> {% endcomment %}
+        <!-- ================== END page-js ================== -->
+</body>
+</html>
 
 
