@@ -11,4 +11,4 @@
 ![Shift_flow](https://github.com/user-attachments/assets/f2d1c22f-0472-4e5f-b04d-34cf022d8b83)
 
 ## Project Structure.
-![project_structure](https://github.com/user-attachments/assets/8bd5d72d-5040-4649-b3a4-fa1c38a46f83)
+
