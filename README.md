@@ -11,37 +11,4 @@
 ![Shift_flow](https://github.com/user-attachments/assets/f2d1c22f-0472-4e5f-b04d-34cf022d8b83)
 
 ## Project Structure.
-
-Shift-Tracker/
-├── README.md
-├── manage.py
-├── requirements.txt
-├── authentication/
-│   ├── __init__.py
-│   ├── admin.py
-│   ├── apps.py
-│   ├── forms.py
-│   ├── migrations/
-│   ├── models.py
-│   ├── tests.py
-│   ├── urls.py
-│   └── views.py
-├── flow/
-│   ├── __init__.py
-│   ├── admin.py
-│   ├── apps.py
-│   ├── migrations/
-│   ├── models.py
-│   ├── tests.py
-│   └── views.py
-├── shift_tracker/
-│   ├── __init__.py
-│   ├── asgi.py
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
-├── static/
-├── templates/
-└── myenv/
-
-
+![project_structure](https://github.com/user-attachments/assets/8bd5d72d-5040-4649-b3a4-fa1c38a46f83)
