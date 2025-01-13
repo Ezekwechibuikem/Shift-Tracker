@@ -14,7 +14,10 @@
 ## SHIFT TRACKER WORK FLOW 
 
 ![Shift_flow](https://github.com/user-attachments/assets/f2d1c22f-0472-4e5f-b04d-34cf022d8b83)
-## Project Structure.
+
+## Project Structure
+
+```## Project Structure.
 
 Shift-Tracker/
 ├── README.md
@@ -47,3 +50,5 @@ Shift-Tracker/
 ├── static/
 ├── templates/
 └── myenv/
+
+
