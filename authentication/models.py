@@ -76,7 +76,7 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return f"{self.first_name} {self.last_name} <{self.email}>"
     
-    # Helper methods for role-based checks
+    
     def is_admin(self):
         return self.role == 'ADMIN' or self.is_superuser
     
