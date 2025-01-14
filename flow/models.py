@@ -2,16 +2,54 @@ from django.db import models
 from authentication.models import CustomUser
 
 class StaffMember(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='staff_profile')
     is_active = models.BooleanField(default=True)
-    supervisor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='supervised_team')
+    supervisor = models.ForeignKey(
+        CustomUser, 
+        on_delete=models.CASCADE, 
+        related_name='supervised_staff',
+        limit_choices_to={'role': 'SUPERVISOR'}
+    )
     
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"
     
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.supervisor.role != 'SUPERVISOR':
+            raise ValidationError('The assigned supervisor must have a Supervisor role.')
+        if self.user.role != 'STAFF':
+            raise ValidationError('Only users with Staff role can be staff members.')
+            
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
     @property
     def team(self):
         return self.user.team
+
+    @property
+    def get_team_members(self):
+        """Get all staff members in the same team"""
+        return StaffMember.objects.filter(
+            user__team=self.user.team,
+            is_active=True
+        ).exclude(id=self.id)
+
+    def get_supervisor_staff(supervisor):
+        """Get all staff members under a supervisor"""
+        return StaffMember.objects.filter(
+            supervisor=supervisor,
+            is_active=True
+        )
+
+    def get_team_staff(team_name):
+        """Get all staff members in a specific team"""
+        return StaffMember.objects.filter(
+            user__team=team_name,
+            is_active=True
+        )
 
 class WeeklySchedule(models.Model):
     staff_member = models.ForeignKey(StaffMember, on_delete=models.CASCADE)
