@@ -33,9 +33,12 @@ Shift-Tracker/
 │   ├── __init__.py
 │   ├── admin.py
 │   ├── apps.py
+│   ├── forms.py
+│   ├── signals.py
 │   ├── migrations/
 │   ├── models.py
 │   ├── tests.py
+│   ├── urls.py
 │   └── views.py
 ├── shift_tracker/
 │   ├── __init__.py
