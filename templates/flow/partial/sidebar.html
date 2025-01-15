@@ -84,11 +84,27 @@
             </a>
         </div>
         <div class="menu-item">
-            <a href="{% url 'flow:create_schedule' %}" class="menu-link">
+            <a href="{% url 'flow:assign_staff_list' %}" class="menu-link">
                 <div class="menu-icon">
                     <i class="fa fa-question-circle"></i>
                 </div>
-                <div class="menu-text">Schedule</div>
+                <div class="menu-text">Staff assignment</div>
+            </a>
+        </div>
+        {% comment %} <div class="menu-item">
+            <a href="{% url 'flow:assign_supervisor' staff_id=staff.id %}" class="menu-link">
+                <div class="menu-icon">
+                    <i class="fa fa-question-circle"></i>
+                </div>
+                <div class="menu-text">Staff supervisor</div>
+            </a>
+        </div> {% endcomment %}
+        <div class="menu-item">
+            <a href="{% url 'flow:supervision_overview' %}" class="menu-link">
+                <div class="menu-icon">
+                    <i class="fa fa-question-circle"></i>
+                </div>
+                <div class="menu-text">Staff Overview</div>
             </a>
         </div>
         <div class="menu-item has-sub">

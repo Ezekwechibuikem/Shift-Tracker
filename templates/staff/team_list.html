@@ -1,0 +1,42 @@
+{% extends 'flow/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Teams
+        <a href="{% url 'authentication:team_create' %}" class="btn btn-primary float-end">
+            Create Team
+        </a>
+    </h2>
+    <div class="table-responsive mt-3">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Number</th>
+                    <th>Department</th>
+                    <th>Unit</th>
+                    <th>Supervisor</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for team in teams %}
+                <tr>
+                    <td>{{ team.name }}</td>
+                    <td>{{ team.number }}</td>
+                    <td>{{ team.department }}</td>
+                    <td>{{ team.unit }}</td>
+                    <td>{{ team.supervisor }}</td>
+                    <td>
+                        <a href="{% url 'authentication:team_update' team.pk %}" 
+                           class="btn btn-sm btn-outline-primary">
+                            Edit
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

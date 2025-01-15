@@ -1,0 +1,32 @@
+{% extends 'flow/base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold mb-6">Supervision Overview</h1>
+    
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white rounded-lg overflow-hidden">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="px-6 py-3 text-left">Staff Member</th>
+                    <th class="px-6 py-3 text-left">Department</th>
+                    <th class="px-6 py-3 text-left">Supervisor</th>
+                    <th class="px-6 py-3 text-left">Assigned By</th>
+                    <th class="px-6 py-3 text-left">Assigned Date</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for assignment in assignments %}
+                <tr>
+                    <td class="px-6 py-4">{{ assignment.staff.get_full_name }}</td>
+                    <td class="px-6 py-4">{{ assignment.staff.department }}</td>
+                    <td class="px-6 py-4">{{ assignment.supervisor.get_full_name }}</td>
+                    <td class="px-6 py-4">{{ assignment.assigned_by.get_full_name }}</td>
+                    <td class="px-6 py-4">{{ assignment.assigned_date|date:"M d, Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
