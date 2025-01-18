@@ -1,42 +1,73 @@
-{% extends 'flow/base.html' %}
+{% extends 'base.html' %}
+
+{% block title %}Team Management{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>Teams
-        <a href="{% url 'authentication:team_create' %}" class="btn btn-primary float-end">
-            Create Team
-        </a>
-    </h2>
-    <div class="table-responsive mt-3">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Number</th>
-                    <th>Department</th>
-                    <th>Unit</th>
-                    <th>Supervisor</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for team in teams %}
-                <tr>
-                    <td>{{ team.name }}</td>
-                    <td>{{ team.number }}</td>
-                    <td>{{ team.department }}</td>
-                    <td>{{ team.unit }}</td>
-                    <td>{{ team.supervisor }}</td>
-                    <td>
-                        <a href="{% url 'authentication:team_update' team.pk %}" 
-                           class="btn btn-sm btn-outline-primary">
-                            Edit
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Team Management</h4>
+        {% if user.is_admin %}
+        <a href="{% url 'authentication:team_create' %}" class="btn btn-primary">Create Team</a>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <!-- Filters -->
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <select id="department_filter" class="form-select">
+                    <option value="">All Departments</option>
+                    {% for dept in departments %}
+                    <option value="{{ dept.id }}">{{ dept.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select id="unit_filter" class="form-select">
+                    <option value="">All Units</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Teams Table -->
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Number</th>
+                        <th>Department</th>
+                        <th>Unit</th>
+                        <th>Supervisor</th>
+                        <th>Members</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for team in teams %}
+                    <tr>
+                        <td>{{ team.name }}</td>
+                        <td>{{ team.number }}</td>
+                        <td>{{ team.department.name }}</td>
+                        <td>{{ team.unit.name }}</td>
+                        <td>{{ team.supervisor.get_full_name }}</td>
+                        <td>{{ team.members.count }}</td>
+                        <td>
+                            <span class="badge {% if team.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                {% if team.is_active %}Active{% else %}Inactive{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            {% if user.is_admin or team.supervisor == user %}
+                            <a href="{% url 'authentication:team_update' team.id %}" class="btn btn-sm btn-primary">Edit</a>
+                            <a href="{% url 'authentication:team_members' team.id %}" class="btn btn-sm btn-info">Manage Members</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

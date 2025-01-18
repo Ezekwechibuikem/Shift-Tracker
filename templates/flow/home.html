@@ -1,74 +1,114 @@
-{% extends 'flow/base.html' %}
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
-    <!-- BEGIN breadcrumb -->
-    <ol class="breadcrumb float-xl-end">
-        <li class="breadcrumb-item"><a href="javascript:;">Home</a></li>
-        <li class="breadcrumb-item active">Dashboard</li>
-    </ol>
-    <!-- END breadcrumb -->
-    <!-- BEGIN page-header -->
-    <h1 class="page-header">Dashboard <small>welcome to the home page </small></h1>
-    <!-- END page-header -->
-    
-    <!-- BEGIN row -->
+<div class="container mt-4">
+    {% if user.is_admin %}
+    <!-- Admin Dashboard -->
     <div class="row">
-        <!-- BEGIN col-3 -->
-        <div class="col-xl-3 col-md-6">
-            <div class="widget widget-stats bg-blue">
-                <div class="stats-icon"><i class="fa fa-desktop"></i></div>
-                <div class="stats-info">
-                    <h4>TOTAL VISITORS</h4>
-                    <p>3,291,922</p>	
-                </div>
-                <div class="stats-link">
-                    <a href="javascript:;">View Detail <i class="fa fa-arrow-alt-circle-right"></i></a>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                    <h2>{{ total_users }}</h2>
                 </div>
             </div>
         </div>
-        <!-- END col-3 -->
-        <!-- BEGIN col-3 -->
-        <div class="col-xl-3 col-md-6">
-            <div class="widget widget-stats bg-info">
-                <div class="stats-icon"><i class="fa fa-link"></i></div>
-                <div class="stats-info">
-                    <h4>BOUNCE RATE</h4>
-                    <p>20.44%</p>	
-                </div>
-                <div class="stats-link">
-                    <a href="javascript:;">View Detail <i class="fa fa-arrow-alt-circle-right"></i></a>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Teams</h5>
+                    <h2>{{ total_teams }}</h2>
                 </div>
             </div>
         </div>
-        <!-- END col-3 -->
-        <!-- BEGIN col-3 -->
-        <div class="col-xl-3 col-md-6">
-            <div class="widget widget-stats bg-orange">
-                <div class="stats-icon"><i class="fa fa-users"></i></div>
-                <div class="stats-info">
-                    <h4>UNIQUE VISITORS</h4>
-                    <p>1,291,922</p>	
-                </div>
-                <div class="stats-link">
-                    <a href="javascript:;">View Detail <i class="fa fa-arrow-alt-circle-right"></i></a>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Active Departments</h5>
+                    <h2>{{ department_stats.count }}</h2>
                 </div>
             </div>
         </div>
-        <!-- END col-3 -->
-        <!-- BEGIN col-3 -->
-        <div class="col-xl-3 col-md-6">
-            <div class="widget widget-stats bg-red">
-                <div class="stats-icon"><i class="fa fa-clock"></i></div>
-                <div class="stats-info">
-                    <h4>AVG TIME ON SITE</h4>
-                    <p>00:12:23</p>	
-                </div>
-                <div class="stats-link">
-                    <a href="javascript:;">View Detail <i class="fa fa-arrow-alt-circle-right"></i></a>
-                </div>
-            </div>
-        </div>
-        <!-- END col-3 -->
     </div>
-    <!-- END row -->
-{% endblock content %}
+
+    <!-- Department Statistics -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">Department Overview</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                            <th>Teams</th>
+                            <th>Members</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dept in department_stats %}
+                        <tr>
+                            <td>{{ dept.name }}</td>
+                            <td>{{ dept.team_count }}</td>
+                            <td>{{ dept.member_count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- User's Teams Section -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">My Teams</h5>
+        </div>
+        <div class="card-body">
+            {% if user_teams %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Team</th>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Unit</th>
+                            {% if user.is_supervisor %}
+                            <th>Members</th>
+                            <th>Actions</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for team in user_teams %}
+                        <tr>
+                            <td>{{ team.name }}</td>
+                            <td>{{ team.number }}</td>
+                            <td>{{ team.department.name }}</td>
+                            <td>{{ team.unit.name }}</td>
+                            {% if user.is_supervisor %}
+                            <td>{{ team.members.count }}</td>
+                            <td>
+                                <a href="{% url 'authentication:team_details' team.id %}" 
+                                   class="btn btn-sm btn-primary">
+                                    Manage
+                                </a>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted">You are not assigned to any teams.</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

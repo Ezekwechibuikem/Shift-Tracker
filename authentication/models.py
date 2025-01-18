@@ -171,16 +171,20 @@ class CustomUser(AbstractUser):
             if self.supervisor.role not in ['SUPERVISOR']:
                 raise ValidationError('Supervisor must have SUPERVISOR role')
 
-        if self.role == 'STAFF' and self.supervised_users.exists():
-            raise ValidationError('Staff members cannot have supervised users')
-    
-     def is_admin(self):
+        if self.role == 'STAFF' and self.pk:
+            if self.supervised_users.exists():
+                raise ValidationError('Staff members cannot have supervised users')
+                
+    def is_admin(self):
+        """Check if the user has admin privileges"""
         return self.role == 'ADMIN' or self.is_superuser
     
     def is_supervisor(self):
+        """Check if the user has supervisor role"""
         return self.role == 'SUPERVISOR'
     
     def is_staff_member(self):
+        """Check if the user has staff role"""
         return self.role == 'STAFF'
 
 class Team(models.Model):
@@ -220,7 +224,7 @@ class Team(models.Model):
         if self.unit and self.department and self.unit.department != self.department:
             raise ValidationError('Unit must belong to the selected department')
             
-        if self.supervisor:
+        if hasattr(self, 'supervisor') and self.supervisor_id:
             if self.supervisor.department != self.department:
                 raise ValidationError('Supervisor must belong to the same department')
             if self.supervisor.unit != self.unit:

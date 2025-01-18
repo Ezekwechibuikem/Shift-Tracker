@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Team Members - {{ team.name }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Team Members - {{ team.name }}</h4>
+        <a href="{% url 'authentication:team_list' %}" class="btn btn-secondary">Back to Teams</a>
+    </div>
+    <div class="card-body">
+        <!-- Add Member Form -->
+        {% if user.is_admin or team.supervisor == user %}
+        <div class="mb-4">
+            <h5>Add New Member</h5>
+            <form method="post">
+                {% csrf_token %}
+                <div class="row align-items-end">
+                    <div class="col-md-6">
+                        {{ form.staff.label_tag }}
+                        {{ form.staff }}
+                        {% if form.staff.errors %}
+                        <div class="error-message">
+                            {{ form.staff.errors|join:", " }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary">Add Member</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- Members List -->
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for member in members %}
+                    <tr>
+                        <td>{{ member.staff.get_full_name }}</td>
+                        <td>{{ member.staff.email }}</td>
+                        <td>
+                            <span class="badge {% if member.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                {% if member.is_active %}Active{% else %}Inactive{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            {% if user.is_admin or team.supervisor == user %}
+                            <button class="btn btn-sm btn-danger remove-member-btn" 
+                                    data-member-id="{{ member.id }}"
+                                    data-member-name="{{ member.staff.get_full_name }}">
+                                Remove
+                            </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">No members in this team yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    $('.remove-member-btn').click(function() {
+        let memberId = $(this).data('member-id');
+        let memberName = $(this).data('member-name');
+        
+        if (confirm(`Are you sure you want to remove ${memberName} from the team?`)) {
+            $.post("{% url 'authentication:remove_team_member' team.id %}/" + memberId + "/", {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            })
+            .done(function() {
+                location.reload();
+            })
+            .fail(function(xhr) {
+                alert('Error removing member: ' + xhr.responseJSON?.error || 'Unknown error');
+            });
+        }
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

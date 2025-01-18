@@ -4,7 +4,6 @@ from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
 from .models import Department, Unit, CustomUser, Team, TeamMember
 
-
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email'}))
     first_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your first name'}))
@@ -30,7 +29,7 @@ class CustomUserCreationForm(UserCreationForm):
             is_active=True)
 
         if self.instance and self.instance.department:
-            self.fields['unit'].queryset = Unit.objects.filter(department=self.instance.department, is_active=Tru)
+            self.fields['unit'].queryset = Unit.objects.filter(department=self.instance.department, is_active=True)
         else:
             self.fields['unit'].queryset = Unit.objects.none()
 
@@ -53,26 +52,21 @@ class CustomUserCreationForm(UserCreationForm):
 
         if unit and department:
             if unit.department != department:
-                raise ValidationError(
-                    'Selected unit must belong to the selected department')
+                raise ValidationError('Selected unit must belong to the selected department')
             if not unit.is_active:
                 raise ValidationError('Selected unit is inactive')
 
         if supervisor:
             if supervisor.department != department:
-                raise ValidationError(
-                    'Supervisor must belong to the same department')
+                raise ValidationError('Supervisor must belong to the same department')
             if supervisor.unit != unit:
-                raise ValidationError(
-                    'Supervisor must belong to the same unit')
+                raise ValidationError('Supervisor must belong to the same unit')
             if supervisor.role not in ['SUPERVISOR']:
-                raise ValidationError(
-                    'Supervisor must have SUPERVISOR role')
+                raise ValidationError('Supervisor must have SUPERVISOR role')
             if not supervisor.is_active:
                 raise ValidationError('Selected supervisor is inactive')
 
         return cleaned_data
-
 
 class CustomAuthenticationForm(AuthenticationForm):
     username = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email'}))
@@ -88,7 +82,6 @@ class CustomAuthenticationForm(AuthenticationForm):
                 raise ValidationError('This account is inactive')
 
         return cleaned_data
-
 
 class TeamForm(forms.ModelForm):
     class Meta:
@@ -107,23 +100,29 @@ class TeamForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        # Set initial querysets
         self.fields['department'].queryset = Department.objects.filter(
             is_active=True)
+        self.fields['unit'].queryset = Unit.objects.none()
+        self.fields['supervisor'].queryset = CustomUser.objects.none()
 
-        if self.instance and self.instance.department:
+        # If instance exists and has a department
+        if self.instance and hasattr(self.instance, 'department_id') and self.instance.department_id:
+            # Set unit queryset based on department
             self.fields['unit'].queryset = Unit.objects.filter(
                 department=self.instance.department,
                 is_active=True
             )
-            self.fields['supervisor'].queryset = CustomUser.objects.filter(
-                role__in=['ADMIN', 'SUPERVISOR'],
-                department=self.instance.department,
-                unit=self.instance.unit if self.instance.unit else None,
-                is_active=True
-            )
-        else:
-            self.fields['unit'].queryset = Unit.objects.none()
-            self.fields['supervisor'].queryset = CustomUser.objects.none()
+
+            # If instance also has a unit
+            if hasattr(self.instance, 'unit_id') and self.instance.unit_id:
+                # Set supervisor queryset
+                self.fields['supervisor'].queryset = CustomUser.objects.filter(
+                    role__in=['ADMIN', 'SUPERVISOR'],
+                    department=self.instance.department,
+                    unit=self.instance.unit,
+                    is_active=True
+                )
 
     def clean(self):
         cleaned_data = super().clean()
@@ -133,21 +132,17 @@ class TeamForm(forms.ModelForm):
 
         if unit and department:
             if unit.department != department:
-                raise ValidationError(
-                    'Selected unit must belong to the selected department')
+                raise ValidationError('Selected unit must belong to the selected department')
             if not unit.is_active:
                 raise ValidationError('Selected unit is inactive')
 
         if supervisor:
             if supervisor.department != department:
-                raise ValidationError(
-                    'Supervisor must belong to the same department')
+                raise ValidationError('Supervisor must belong to the same department')
             if supervisor.unit != unit:
-                raise ValidationError(
-                    'Supervisor must belong to the same unit')
+                raise ValidationError('Supervisor must belong to the same unit')
             if supervisor.role not in ['ADMIN', 'SUPERVISOR']:
-                raise ValidationError(
-                    'Team supervisor must have ADMIN or SUPERVISOR role')
+                raise ValidationError('Team supervisor must have ADMIN or SUPERVISOR role')
             if not supervisor.is_active:
                 raise ValidationError('Selected supervisor is inactive')
 
@@ -157,8 +152,7 @@ class TeamForm(forms.ModelForm):
                 number=self.cleaned_data['number']
             ).exclude(id=self.instance.id if self.instance else None).exists()
             if exists:
-                raise ValidationError(
-                    'A team with this number already exists in this department')
+                raise ValidationError('A team with this number already exists in this department')
 
         return cleaned_data
 
@@ -194,13 +188,10 @@ class PasswordResetRequestForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data['email'].lower()
-        user = CustomUser.objects.filter(
-            email__iexact=email, is_active=True).first()
+        user = CustomUser.objects.filter(email__iexact=email, is_active=True).first()
         if not user:
-            raise ValidationError(
-                "No active user found with this email address.")
+            raise ValidationError("No active user found with this email address.")
         return email
-
 
 class OTPVerificationForm(forms.Form):
     otp = forms.CharField(

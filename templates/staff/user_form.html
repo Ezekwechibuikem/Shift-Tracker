@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if is_update %}Update User{% else %}Create User{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h4 class="mb-0">
+            {% if is_update %}Update User: {{ user_obj.email }}{% else %}Create New User{% endif %}
+        </h4>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="row">
+                {% for field in form %}
+                <div class="col-md-6 mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <div class="error-message">
+                        {{ field.errors|join:", " }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary">
+                    {% if is_update %}Update User{% else %}Create User{% endif %}
+                </button>
+                <a href="{% url 'authentication:user_list' %}" class="btn btn-secondary">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Handle dynamic form updates
+    $('#id_department').change(function() {
+        let departmentId = $(this).val();
+        if (departmentId) {
+            // Update units dropdown
+            $.get("{% url 'authentication:ajax_units' %}", {
+                department: departmentId
+            }, function(data) {
+                let unitSelect = $('#id_unit');
+                unitSelect.empty().append('<option value="">---------</option>');
+                data.forEach(function(unit) {
+                    unitSelect.append(
+                        `<option value="${unit.id}">${unit.name}</option>`
+                    );
+                });
+            });
+        }
+    });
+
+    $('#id_unit').change(function() {
+        let departmentId = $('#id_department').val();
+        let unitId = $(this).val();
+        if (departmentId && unitId) {
+            // Update supervisors dropdown
+            $.get("{% url 'authentication:ajax_supervisors' %}", {
+                department: departmentId,
+                unit: unitId
+            }, function(data) {
+                let supervisorSelect = $('#id_supervisor');
+                supervisorSelect.empty().append('<option value="">---------</option>');
+                data.forEach(function(supervisor) {
+                    supervisorSelect.append(
+                        `<option value="${supervisor.id}">${supervisor.display_name}</option>`
+                    );
+                });
+            });
+        }
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

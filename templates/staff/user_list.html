@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}User Management{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">User Management</h4>
+        {% if user.is_admin %}
+        <a href="{% url 'authentication:register' %}" class="btn btn-primary">Add User</a>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <!-- Filters -->
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <select id="department_filter" class="form-select">
+                    <option value="">All Departments</option>
+                    {% for dept in departments %}
+                    <option value="{{ dept.id }}">{{ dept.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select id="unit_filter" class="form-select">
+                    <option value="">All Units</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select id="role_filter" class="form-select">
+                    <option value="">All Roles</option>
+                    {% for role_id, role_name in roles %}
+                    <option value="{{ role_id }}">{{ role_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Unit</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="users-table-body">
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.get_full_name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.department.name|default:"-" }}</td>
+                        <td>{{ user.unit.name|default:"-" }}</td>
+                        <td>{{ user.get_role_display }}</td>
+                        <td>
+                            <span class="badge {% if user.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                {% if user.is_active %}Active{% else %}Inactive{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            {% if request.user.is_admin %}
+                            <a href="{% url 'authentication:user_update' user.id %}" class="btn btn-sm btn-primary">Edit</a>
+                            <button class="btn btn-sm btn-danger toggle-status-btn" 
+                                    data-user-id="{{ user.id }}" 
+                                    data-current-status="{{ user.is_active|yesno:'active,inactive' }}">
+                                {% if user.is_active %}Deactivate{% else %}Activate{% endif %}
+                            </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Filter functionality
+    function updateUserList() {
+        let department = $('#department_filter').val();
+        let unit = $('#unit_filter').val();
+        let role = $('#role_filter').val();
+        
+        $.get("{% url 'authentication:ajax_filter_users' %}", {
+            department: department,
+            unit: unit,
+            role: role
+        }, function(data) {
+            let tbody = $('#users-table-body');
+            tbody.empty();
+            
+            data.forEach(function(user) {
+                tbody.append(`
+                    <tr>
+                        <td>${user.first_name} ${user.last_name}</td>
+                        <td>${user.email}</td>
+                        <td>${user.department__name || '-'}</td>
+                        <td>${user.unit__name || '-'}</td>
+                        <td>${user.role}</td>
+                        <td>
+                            <span class="badge ${user.is_active ? 'bg-success' : 'bg-danger'}">
+                                ${user.is_active ? 'Active' : 'Inactive'}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="/users/${user.id}/update/" class="btn btn-sm btn-primary">Edit</a>
+                        </td>
+                    </tr>
+                `);
+            });
+        });
+    }
+    // Event listeners for filters
+    $('#department_filter, #unit_filter, #role_filter').change(updateUserList);
+});
+</script>
+{% endblock %}
+{% endblock %}
