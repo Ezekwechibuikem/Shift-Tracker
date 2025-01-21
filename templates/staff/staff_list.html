@@ -6,6 +6,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>S/N</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Department</th>
@@ -17,6 +18,7 @@
         <tbody>
             {% for staff in staff_members %}
             <tr>
+                <td>{{ forloop.counter }}</td>
                 <td>{{ staff.first_name }} {{ staff.last_name }}</td>
                 <td>{{ staff.email }}</td>
                 <td>{{ staff.department }}</td>

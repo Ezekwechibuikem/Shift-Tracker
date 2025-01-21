@@ -23,7 +23,7 @@
             </a>
         </div>
         <div id="appSidebarProfileMenu" class="collapse">
-            {% if user.is_admin %}
+            {% if user.is_supervisor or user.is_admin %}
                 <div class="menu-item pt-5px">
                     <a href="{% url 'authentication:staff_list' %}" class="menu-link">
                         <div class="menu-icon"><i class="fa fa-user-alt"></i></div>
@@ -31,14 +31,17 @@
                     </a>
                 </div>
             {% endif %}
-            {% if user.is_admin %}
-                <div class="menu-item pb-5px">
-                    <a href="{% url 'authentication:register' %}" class="menu-link">
-                        <div class="menu-icon"><i class="fa fa-user-alt"></i></div>
-                        <div class="menu-text">Register user</div>
+            {% if user.is_staff_member or user.is_admin %}
+                <div class="menu-item pt-5px">
+                    <a href="{% url 'flow:team_staff_list' %}" class="menu-link">
+                        <div class="menu-icon">
+                            <i class="fa fa-users"></i>
+                        </div>
+                        <div class="menu-text">My Team Staff</div>
                     </a>
                 </div>
-            {% endif %}
+                {% endif %}
+         
             {% if user.is_supervisor or user.is_admin %}
                 <div class="menu-item">
                     <a href="javascript:;" class="menu-link">
@@ -51,10 +54,44 @@
                 <div class="menu-item pb-5px">
                     <a href="javascript:;" class="menu-link">
                         <div class="menu-icon"><i class="fa fa-question-circle"></i></div>
-                        <div class="menu-text">Report</div>
+                        <div class="menu-text">Reports</div>
                     </a>
                 </div>
             {% endif %}
+            {% if user.is_admin %}
+                <div class="menu-item pb-5px">
+                    <a href="{% url 'authentication:register' %}" class="menu-link">
+                        <div class="menu-icon"><i class="fa fa-user-alt"></i></div>
+                        <div class="menu-text">Register user</div>
+                    </a>
+                </div>
+            {% endif %}
+            {% if user.is_admin %}
+                <div class="menu-item has-sub">
+                    <a href="{% url 'authentication:user_list' %}" class="menu-link">
+                        <div class="menu-icon">
+                            <i class="fa fa-cogs"></i>
+                        </div>
+                        <div class="menu-text">Update Staff </div>
+                    </a>
+                </div>
+            {% endif %}
+            {% if user.is_admin %}
+                <div class="menu-item pt-5px">
+                    <a href="{% url 'flow:supervisor_dashboard' %}" class="menu-link">
+                        <div class="menu-icon"><i class="fa fa-user-alt"></i></div>
+                        <div class="menu-text">Supervisor Management</div>
+                    </a>
+                </div>
+            {% endif %}
+            {% comment %} {% if user.is_admin %}
+                <div class="menu-item pt-5px">
+                    <a href="{% url 'flow:assign_staff' %}" class="menu-link">
+                        <div class="menu-icon"><i class="fa fa-user-alt"></i></div>
+                        <div class="menu-text">Assign Staff</div>
+                    </a>
+                </div>
+            {% endif %} {% endcomment %}
             <div class="menu-divider m-0"></div>
         </div>
         <div class="menu-header">Overview</div>
@@ -63,7 +100,6 @@
                 <div class="menu-icon">
                     <i class="fa fa-sitemap"></i>							</div>
                 <div class="menu-text">Dashboard</div>
-                {% comment %} <div class="menu-caret"></div> {% endcomment %}
             </a>
         </div>
         <div class="menu-item has-sub">
@@ -84,7 +120,8 @@
             </a>
         </div>
         <div class="menu-item">
-            <a href="{% url 'flow:create_schedule' %}" class="menu-link">
+            <!-- In your template -->
+            <a href="{% url 'authentication:user_list' %}" class="menu-link">
                 <div class="menu-icon">
                     <i class="fa fa-question-circle"></i>
                 </div>
@@ -99,17 +136,6 @@
                 <div class="menu-text">FAQ</div>
             </a>
         </div>
-        {% if user.is_admin %}
-        <div class="menu-header">Administrative</div>
-        <div class="menu-item has-sub">
-            <a href="javascript:;" class="menu-link">
-                <div class="menu-icon">
-                    <i class="fa fa-cogs"></i>
-                </div>
-                <div class="menu-text">Admin Support</div>
-            </a>
-        </div>
-        {% endif %}
 
         <!-- BEGIN minify-button -->
         <div class="menu-item d-flex">
@@ -117,9 +143,7 @@
         </div>
         <!-- END minify-button -->
 
-        <div id="footer" class="app-footer m-0" style="text-align: left; position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px 20px; background-color: #fff; border-top: 1px solid #dee2e6; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);">
-            &copy; {% now "Y" %} JAY & OAKS. All right reserved <span style="float: right;">v1.0.0</span>
-        </div>
+        
     </div>
     <!-- END menu -->
 </div>

@@ -1,0 +1,49 @@
+{% extends 'flow/base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">Supervisors List</h1>
+    
+    <div class="bg-white shadow rounded-lg p-6">
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="py-3 px-4 text-left font-semibold">S/N</th>
+                        <th class="py-3 px-4 text-left font-semibold">Name</th>
+                        <th class="py-3 px-4 text-left font-semibold">Email</th>
+                        <th class="py-3 px-4 text-left font-semibold">Department</th>
+                        <th class="py-3 px-4 text-left font-semibold">Unit</th>
+                        <th class="py-3 px-4 text-left font-semibold">Team</th>
+                        <th class="py-3 px-4 text-left font-semibold">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for supervisor in supervisors %}
+                    <tr class="border-t hover:bg-gray-50">
+                        <td class="py-3 px-4">{{ forloop.counter }}</td>
+                        <td class="py-3 px-4">{{ supervisor.first_name }} {{ supervisor.last_name }}</td>
+                        <td class="py-3 px-4">{{ supervisor.email }}</td>
+                        <td class="py-3 px-4">{{ supervisor.department }}</td>
+                        <td class="py-3 px-4">{{ supervisor.unit }}</td>
+                        <td class="py-3 px-4">{{ supervisor.team }}</td>
+                        <td class="py-3 px-4">
+                            <a href="{% url 'flow:assign_staff' supervisor.id %}" 
+                               class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                                Assign Staff
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="py-3 px-4 text-center text-gray-500">
+                            No supervisors found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

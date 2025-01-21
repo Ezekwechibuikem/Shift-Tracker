@@ -3,145 +3,119 @@
 {% block title %}Register{% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <h2>Register</h2>
-    <form method="post" autocomplete="off">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Register</button>
-    </form>
-    <p>Already have an account? <a href="{% url 'authentication:login' %}">Login here</a></p>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">  
+            <div class="form-container">
+                <h2>Register</h2>
+                <form method="post" autocomplete="off">
+                    {% csrf_token %}
+                    {% comment %} {{ form.as_p }} {% endcomment %}
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group mb-3">
+								<label for="{{ form.email.id_for_label }}">Email</label>
+								{{ form.email }}
+								{% if form.email.errors %}
+									<div class="invalid-feedback d-block">
+										{{ form.email.errors.0 }}
+									</div>
+								{% endif %}
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group mb-3">
+								<label for="{{ form.first_name.id_for_label }}">First Name</label>
+								{{ form.first_name }}
+								{% if form.first_name.errors %}
+									<div class="invalid-feedback d-block">
+										{{ form.first_name.errors.0 }}
+									</div>
+								{% endif %}
+							</div>
+							<div class="form-group mb-3">
+								<label for="{{ form.team.id_for_label }}">Team</label>
+								<select name="{{ form.team.name }}" id="{{ form.team.id_for_label }}" class="form-control">
+									<option value="" selected disabled>Select team</option>
+									{% for value, label in form.team.field.choices %}
+										{% if value %}  
+											<option value="{{ value }}">{{ label }}</option>
+										{% endif %}
+									{% endfor %}
+								</select>
+								{% if form.role.errors %}
+									<div class="invalid-feedback d-block">
+										{{ form.team.errors.0 }}
+									</div>
+								{% endif %}
+							</div>
+							<div class="form-group mb-3">
+								<label for="{{ form.department.id_for_label }}"> Department</label>
+								{{ form.department }}
+							</div>
+							<div class="form-group mb-3">
+								<label for="{{ form.password1.id_for_label }}">Password</label>
+								{{ form.password1 }}
+								{% if form.password1.errors %}
+									<div class="invalid-feedback d-block">
+										{{ form.password1.errors.0 }}
+									</div>
+								{% endif %}
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group mb-3">
+								<label for="{{ form.last_name.id_for_label }}">Last Name</label>
+								{{ form.last_name }}
+								{% if form.last_name.errors %}
+									<div class="invalid-feedback d-block">
+										{{ form.last_name.errors.0 }}
+									</div>
+								{% endif %}
+							</div>
+							<div class="form-group mb-3">
+								<label for="{{ form.role.id_for_label }}">Role</label>
+								<select name="{{ form.role.name }}" id="{{ form.role.id_for_label }}" class="form-control">
+									<option value="" selected disabled>Select role</option>
+									{% for value, label in form.role.field.choices %}
+										{% if value %}  
+											<option value="{{ value }}">{{ label }}</option>
+										{% endif %}
+									{% endfor %}
+								</select>
+								{% if form.role.errors %}
+									<div class="invalid-feedback d-block">
+										{{ form.role.errors.0 }}
+									</div>
+								{% endif %}
+							</div>
+							<div class="form-group mb-3">
+								<label for="{{ form.unit.id_for_label }}"> Unit</label>
+								{{ form.unit }}
+							</div>
+							<div class="form-group mb-3">
+								<label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+								{{ form.password2 }}
+								{% if form.password2.errors %}
+									<div class="invalid-feedback d-block">
+										{{ form.password2.errors.0 }}
+									</div>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+					
+					<div class="row mt-4">
+						<div class="col-12 text-end">
+							<button type="submit" class="btn btn-primary px-5">Register</button>
+						</div>
+					</div>
+                </form>
+                <p>Already have an account? <a href="{% url 'authentication:login' %}">Login here</a></p>
+            </div>
+        </div>
+    </div>
 </div>
 
-{% comment %} <div class="form-group">
-    <label for="{{ form.role.id_for_label }}">Role</label>
-    {{ form.role }}
-    {% if form.role.errors %}
-        <div class="alert alert-danger">
-            {{ form.role.errors }}
-        </div>
-    {% endif %}
-</div> {% endcomment %}
 {% endblock %}
 
-
-{% comment %} 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="utf-8" />
-	<title>Shift | Login</title>
-	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
-	<meta content="" name="description" />
-	<meta content="" name="author" />
-	
-	<!-- ================== BEGIN core-css ================== -->
-	<link href="../assets/css/vendor.min.css" rel="stylesheet" />
-	<link href="../assets/css/default/app.min.css" rel="stylesheet" />
-	<!-- ================== END core-css ================== -->
-</head>
-<body class='pace-top'>
-	<!-- BEGIN #loader -->
-	<div id="loader" class="app-loader">
-		<span class="spinner"></span>
-	</div>
-	<!-- END #loader -->
-
-	
-	<!-- BEGIN #app -->
-	<div id="app" class="app">
-		<!-- BEGIN login -->
-		<div class="login login-v2 fw-bold">
-			<!-- BEGIN login-cover -->
-			<div class="login-cover">
-				<div class="login-cover-img" style="background-image: url(../assets/img/login-bg/login-bg-17.jpg)" data-id="login-cover-image"></div>
-				<div class="login-cover-bg"></div>
-			</div>
-			<!-- END login-cover -->
-			
-			<!-- BEGIN login-container -->
-			<div class="login-container">
-				<!-- BEGIN login-header -->
-				<div class="login-header">
-					<div class="brand">
-						<div class="d-flex align-items-center">
-							<span class="logo"></span> <b>Shift</b> Tracker
-						</div>
-						<small>Having Issues? Contact Admin</small>
-					</div>
-				</div>
-				<!-- END login-header -->
-				
-				<!-- BEGIN login-content -->
-				<div class="register-content">
-					<form action="index.html" method="GET" class="fs-13px">
-						<div class="mb-2">
-							<label class="mb-2">Email <span class="text-danger">*</span></label>
-							<input type="text" class="form-control fs-13px" placeholder="Email address" />
-						</div>
-						<div class="mb-3">
-							<label class="mb-2">Name <span class="text-danger">*</span></label>
-							<div class="row gx-3">
-								<div class="col-md-6 mb-2 mb-md-0">
-									<input type="text" class="form-control fs-13px" placeholder="First name" />
-								</div>
-								<div class="col-md-6">
-									<input type="text" class="form-control fs-13px" placeholder="Last name" />
-								</div>
-							</div>
-						</div>
-						
-						<div class="mb-3">
-							<label class="mb-2">Name <span class="text-danger">*</span></label>
-							<div class="row gx-3">
-								<div class="col-md-6 mb-2 mb-md-0">
-									<input type="text" class="form-control fs-13px" placeholder="First name" />
-								</div>
-								<div class="col-md-6">
-									<input type="text" class="form-control fs-13px" placeholder="Last name" />
-								</div>
-							</div>
-						</div>
-						<div class="mb-3">
-							<label class="mb-2">Password <span class="text-danger">*</span></label>
-							<input type="password" class="form-control fs-13px" placeholder="Password" />
-						</div>
-						<div class="mb-3">
-							<label class="mb-2">Confirm Password <span class="text-danger">*</span></label>
-							<input type="password" class="form-control fs-13px" placeholder="Confirm Password" />
-						</div>
-						<div class="mb-3">
-							<label class="mb-2">Role <span class="text-danger">*</span></label>
-							<input type="text" class="form-control fs-13px" placeholder="Staff Role" />
-						</div>
-						<div class="mb-3">
-							<button type="submit" class="btn btn-theme d-block w-100 btn-lg h-45px fs-13px">Sign Up</button>
-						</div>
-						<!-- <div class="mb-4 pb-5">
-							Already a member? Click <a href="login_v3.html">here</a> to login.
-						</div> -->
-						
-					</form>
-				</div>
-				<!-- END login-content -->
-			</div>
-			<!-- END login-container -->
-		</div>
-		<!-- END login -->
-		
-		<!-- BEGIN scroll-top-btn -->
-		<a href="javascript:;" class="btn btn-icon btn-circle btn-theme btn-scroll-to-top" data-toggle="scroll-to-top"><i class="fa fa-angle-up"></i></a>
-		<!-- END scroll-top-btn -->
-	</div>
-	<!-- END #app -->
-	
-	<!-- ================== BEGIN core-js ================== -->
-	<script src="../assets/js/vendor.min.js"></script>
-	<script src="../assets/js/app.min.js"></script>
-	<!-- ================== END core-js ================== -->
-	
-	<!-- ================== BEGIN page-js ================== -->
-	<script src="../assets/js/demo/login-v2.demo.js"></script>
-	<!-- ================== END page-js ================== -->
-</body>
-</html> {% endcomment %}

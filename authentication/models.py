@@ -52,7 +52,7 @@ class CustomUser(AbstractUser):
         ('STAFF', 'Staff'),
     )
     TEAM_CHOICES = (
-        ('TEAM0', 'Team 0'),
+        ('TeamLead', 'Team Lead'),
         ('TEAM1', 'Team 1'),
         ('TEAM2', 'Team 2'),
         ('TEAM3', 'Team 3'),

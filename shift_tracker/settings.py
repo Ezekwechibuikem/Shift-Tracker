@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'flow.apps.FlowConfig',
-    'channels',
+    'flow',
+    
 ]
 
 # CHANNEL_LAYERS = {

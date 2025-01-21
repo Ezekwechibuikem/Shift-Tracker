@@ -40,6 +40,7 @@
                                 </div>
                                 <div class="card-body">
                                     <p class="text-center">Please enter the OTP sent to your email.</p>
+                                    <small><p>check email spam and other email folder for your otp</p></small>
                                     <form method="post">
                                         {% csrf_token %}
                                         {{ form.as_p }}

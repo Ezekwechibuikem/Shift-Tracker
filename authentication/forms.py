@@ -4,6 +4,7 @@ from django.contrib.auth import password_validation
 from .models import CustomUser
 
 class CustomUserCreationForm(UserCreationForm):
+    """ Admin registeration page for users """
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={
             'class': 'form-control','placeholder': 'Enter your email'})
     )
@@ -49,6 +50,33 @@ class CustomUserCreationForm(UserCreationForm):
             raise forms.ValidationError("Passwords don't match")
         password_validation.validate_password(password2, self.instance)
         return password2
+    
+class UserEditForm(forms.ModelForm):
+    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={
+        'class': 'form-control'
+    }))
+    first_name = forms.CharField(required=True, widget=forms.TextInput(attrs={
+        'class': 'form-control'
+    }))
+    last_name = forms.CharField(required=True, widget=forms.TextInput(attrs={
+        'class': 'form-control'
+    }))
+    department = forms.CharField(required=True, widget=forms.TextInput(attrs={
+        'class': 'form-control'
+    }))
+    unit = forms.CharField(required=True, widget=forms.TextInput(attrs={
+        'class': 'form-control'
+    }))
+    role = forms.ChoiceField(choices=CustomUser.ROLE_CHOICES, widget=forms.Select(attrs={
+        'class': 'form-control'
+    }))
+    team = forms.ChoiceField(choices=CustomUser.TEAM_CHOICES, widget=forms.Select(attrs={
+        'class': 'form-control'
+    }))
+
+    class Meta:
+        model = CustomUser
+        fields = ['email', 'first_name', 'last_name', 'department', 'unit', 'role', 'team']
 
 class CustomAuthenticationForm(AuthenticationForm):
     username = forms.EmailField(

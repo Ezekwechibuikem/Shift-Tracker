@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import Group
-from .forms import CustomUserCreationForm, CustomAuthenticationForm, PasswordResetRequestForm, OTPVerificationForm, SetNewPasswordForm
+from .forms import CustomUserCreationForm, CustomAuthenticationForm, PasswordResetRequestForm, OTPVerificationForm, SetNewPasswordForm, UserEditForm
 import random
 import string
 from django.core.mail import send_mail
@@ -160,8 +160,17 @@ def set_new_password(request):
 
 @login_required
 def staff_list(request):
-    staff_members = CustomUser.objects.all().order_by('last_name')
-    return render(request, 'flow/staff_list.html', {'staff_members': staff_members})
+    """list of staff by supervisor"""
+    staff_members = CustomUser.objects.filter(role='STAFF' ).order_by('first_name', 'last_name')
+    context = {
+        'staff_members': staff_members,
+    }
+    return render(request, 'staff/staff_list.html', context)
+
+def user_list(request):
+    """list of staff for editing page"""
+    users = CustomUser.objects.all().order_by('first_name')
+    return render(request, 'authentication/user_list.html', {'users': users})
 
 @login_required
 def profile(request):
@@ -169,7 +178,23 @@ def profile(request):
     context = {
         'display_profile': display_profile
     }
-    return render(request, 'flow/profile.html', context)
+    return render(request, 'staff/profile.html', context)
+
+@login_required
+def edit_user(request, user_id):
+    user = get_object_or_404(CustomUser, id=user_id)
+    if request.method == 'POST':
+        form = UserEditForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('authentication:user_list')
+    else:
+        form = UserEditForm(instance=user)
+    
+    return render(request, 'authentication/edit_user.html', {
+        'form': form,
+        'edit_user': user
+    })
 
 def admin_contact(request):
     context = {
