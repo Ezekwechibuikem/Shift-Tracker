@@ -4,10 +4,14 @@ from django.contrib import messages
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.urls import reverse
-
+from django.utils import timezone
+from django.db import transaction
+from datetime import datetime, timedelta
 from authentication.models import CustomUser
-from .models import SupervisorAssignment
-from .forms import SupervisorAssignmentForm
+from .models import SupervisorAssignment, WeeklySchedule, StaffShift, Holiday, Attendance
+from .forms import SupervisorAssignmentForm, WeeklyScheduleGenerationForm, HolidayForm, ManualScheduleEditForm
+from .utils import ScheduleGenerator
+
 
 @login_required
 def supervisor_dashboard(request):
@@ -15,12 +19,10 @@ def supervisor_dashboard(request):
         messages.error(request, "Access denied. Admin privileges required.")
         return redirect('authentication:home')
     
-    # Get all users with supervisor role, ordered by name
     supervisors = CustomUser.objects.filter(
         role='SUPERVISOR'
     ).order_by('first_name', 'last_name')
 
-    # Search functionality
     search_query = request.GET.get('search', '')
     if search_query:
         supervisors = supervisors.filter(
@@ -31,7 +33,6 @@ def supervisor_dashboard(request):
             Q(unit__icontains=search_query)
         )
 
-    # Pagination
     paginator = Paginator(supervisors, 10)  
     page_number = request.GET.get('page')
     supervisors_page = paginator.get_page(page_number)
@@ -50,14 +51,12 @@ def assign_staff(request, supervisor_id):
     
     supervisor = get_object_or_404(CustomUser, id=supervisor_id, role='SUPERVISOR')
     
-    # Get currently assigned staff with all their information
     assigned_staff = CustomUser.objects.filter(
         assigned_supervisor__supervisor=supervisor
     ).select_related(
-        'assigned_supervisor__supervisor'  # This joins the supervisor information
+        'assigned_supervisor__supervisor'  
     ).order_by('first_name', 'last_name')
     
-    # Get unassigned staff (staff without this supervisor)
     unassigned_staff = CustomUser.objects.filter(
         role='STAFF'
     ).exclude(
@@ -113,13 +112,11 @@ def team_staff_list(request):
         messages.error(request, "Access denied. Supervisor privileges required.")
         return redirect('authentication:home')
     
-    # Get staff members in the same team as the supervisor
     staff_members = CustomUser.objects.filter(
         role='STAFF',
         team=request.user.team
     ).order_by('first_name', 'last_name')
 
-    # Search functionality
     search_query = request.GET.get('search', '')
     if search_query:
         staff_members = staff_members.filter(
@@ -130,8 +127,7 @@ def team_staff_list(request):
             Q(unit__icontains=search_query)
         )
 
-    # Pagination
-    paginator = Paginator(staff_members, 10)  # 10 staff per page
+    paginator = Paginator(staff_members, 10)  
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -141,3 +137,183 @@ def team_staff_list(request):
         'team_name': request.user.team,
     }
     return render(request, 'flow/team_staff_list.html', context)
+
+@login_required
+def generate_schedule(request):
+    """View for supervisors to generate weekly schedules"""
+    if not request.user.is_supervisor():
+        messages.error(request, "Access denied. Supervisor privileges required.")
+        return redirect('authentication:home')
+    
+    if request.method == 'POST':
+        form = WeeklyScheduleGenerationForm(request.POST)
+        if form.is_valid():
+            try:
+                start_date = form.cleaned_data['start_date']
+                
+                # Check if schedule already exists for this week
+                existing_schedule = WeeklySchedule.objects.filter(
+                    supervisor=request.user,
+                    start_date=start_date
+                ).first()
+                
+                if existing_schedule:
+                    messages.error(request, "A schedule already exists for this week.")
+                    return redirect('flow:view_schedule', schedule_id=existing_schedule.id)
+                
+                # Generate the schedule
+                generator = ScheduleGenerator(request.user, start_date)
+                schedule = generator.generate_schedule()
+                
+                messages.success(request, "Schedule generated successfully!")
+                return redirect('flow:view_schedule', schedule_id=schedule.id)
+            
+            except Exception as e:
+                messages.error(request, f"Error generating schedule: {str(e)}")
+    else:
+        # Default to next Sunday if no date specified
+        next_sunday = timezone.now().date()
+        while next_sunday.weekday() != 6:
+            next_sunday += timedelta(days=1)
+        
+        form = WeeklyScheduleGenerationForm(initial={'start_date': next_sunday})
+    
+    context = {
+        'form': form,
+    }
+    return render(request, 'flow/generate_schedule.html', context)
+
+@login_required
+def view_schedule(request, schedule_id=None):
+    """View to display weekly schedule"""
+    user = request.user
+    
+    if schedule_id:
+        schedule = get_object_or_404(WeeklySchedule, id=schedule_id)
+    else:
+        # Get current or next schedule
+        schedule = WeeklySchedule.objects.filter(
+            start_date__lte=timezone.now().date(),
+            end_date__gte=timezone.now().date()
+        ).first()
+    
+    if not schedule:
+        if user.is_supervisor():
+            messages.info(request, "No schedule found. Generate a new schedule.")
+            return redirect('flow:generate_schedule')
+        else:
+            messages.info(request, "No current schedule found.")
+            return redirect('authentication:home')
+    
+    # Get shifts grouped by team
+    shifts = StaffShift.objects.filter(
+        schedule=schedule
+    ).select_related('staff').order_by('staff__team', 'staff__first_name')
+    
+    # Get holidays during this period
+    holidays = Holiday.objects.filter(
+        date__range=[schedule.start_date, schedule.end_date]
+    )
+    
+    context = {
+        'schedule': schedule,
+        'shifts': shifts,
+        'holidays': holidays,
+        'date_range': [schedule.start_date + timedelta(days=x) for x in range(7)],
+    }
+    return render(request, 'flow/view_schedule.html', context)
+
+@login_required
+def manage_holidays(request):
+    """View for supervisors to manage holidays"""
+    if not request.user.is_supervisor():
+        messages.error(request, "Access denied. Supervisor privileges required.")
+        return redirect('authentication:home')
+    
+    if request.method == 'POST':
+        form = HolidayForm(request.POST)
+        if form.is_valid():
+            holiday = form.save(commit=False)
+            holiday.created_by = request.user
+            holiday.save()
+            messages.success(request, f"Holiday '{holiday.name}' added successfully!")
+            return redirect('flow:manage_holidays')
+    else:
+        form = HolidayForm()
+    
+    # Get upcoming holidays
+    upcoming_holidays = Holiday.objects.filter(
+        date__gte=timezone.now().date()
+    ).order_by('date')
+    
+    context = {
+        'form': form,
+        'upcoming_holidays': upcoming_holidays,
+    }
+    return render(request, 'flow/manage_holidays.html', context)
+
+@login_required
+def edit_schedule(request, schedule_id):
+    """View for supervisors to manually edit schedules"""
+    if not request.user.is_supervisor():
+        messages.error(request, "Access denied. Supervisor privileges required.")
+        return redirect('authentication:home')
+    
+    schedule = get_object_or_404(WeeklySchedule, id=schedule_id)
+    
+    if request.method == 'POST':
+        form = ManualScheduleEditForm(request.POST, schedule=schedule)
+        if form.is_valid():
+            try:
+                staff = form.cleaned_data['staff']
+                date = form.cleaned_data['date']
+                is_off_day = form.cleaned_data['is_off_day']
+                
+                shift = StaffShift.objects.get(
+                    schedule=schedule,
+                    staff=staff,
+                    date=date
+                )
+                shift.is_off_day = is_off_day
+                shift.save()
+                
+                messages.success(request, "Schedule updated successfully!")
+                return redirect('flow:view_schedule', schedule_id=schedule.id)
+            
+            except StaffShift.DoesNotExist:
+                messages.error(request, "Shift not found.")
+            except Exception as e:
+                messages.error(request, f"Error updating schedule: {str(e)}")
+    else:
+        form = ManualScheduleEditForm(schedule=schedule)
+    
+    context = {
+        'form': form,
+        'schedule': schedule,
+    }
+    return render(request, 'flow/edit_schedule.html', context)
+
+@login_required
+def check_attendance(request):
+    """View to handle staff check-in/check-out"""
+    now = timezone.now()
+    today = now.date()
+    
+    # Get or create today's attendance record
+    attendance, created = Attendance.objects.get_or_create(
+        staff=request.user,
+        date=today,
+        defaults={'time_in': now}
+    )
+    
+    if not created and not attendance.time_out:
+        # Staff is checking out
+        attendance.time_out = now
+        attendance.save()
+        messages.success(request, "Check-out successful!")
+    elif created:
+        messages.success(request, "Check-in successful!")
+    else:
+        messages.info(request, "You have already completed your shift for today.")
+    
+    return redirect('flow:view_schedule')
