@@ -17,38 +17,73 @@
 ```## Project Structure.
 
 Shift-Tracker/
+│
 ├── README.md
 ├── manage.py
-├── requirements.txt
+├── myenv/
+├── static/
+│
 ├── authentication/
 │   ├── __init__.py
 │   ├── admin.py
 │   ├── apps.py
 │   ├── forms.py
-│   ├── migrations/
 │   ├── models.py
 │   ├── tests.py
 │   ├── urls.py
-│   └── views.py
+│   ├── views.py
+│   └── migrations/
+│
 ├── flow/
 │   ├── __init__.py
 │   ├── admin.py
 │   ├── apps.py
 │   ├── forms.py
-│   ├── signals.py
-│   ├── migrations/
 │   ├── models.py
 │   ├── tests.py
 │   ├── urls.py
-│   └── views.py
+│   ├── utils.py
+│   ├── views.py
+│   ├── context_processors.py
+│   ├── templatetags/
+│   └── migrations/
+│
 ├── shift_tracker/
 │   ├── __init__.py
 │   ├── asgi.py
 │   ├── settings.py
 │   ├── urls.py
 │   └── wsgi.py
-├── static/
-├── templates/
-└── myenv/
-
+│
+└── templates/
+   ├── authentication/
+   │   ├── edit_user.html
+   │   ├── login.html
+   │   ├── password_reset_request.html
+   │   ├── register.html
+   │   ├── set_new_password.html
+   │   ├── user_list.html
+   │   └── verify_otp.html
+   │
+   ├── flow/
+   │   ├── admin_contact.html
+   │   ├── assign_staff.html
+   │   ├── base.html
+   │   ├── create_schedule.html
+   │   ├── edit_schedule.html
+   │   ├── generate_schedule.html
+   │   ├── home.html
+   │   ├── intro.html
+   │   ├── manage_holidays.html
+   │   ├── staff_schedule.html
+   │   ├── supervisor_dashboard.html
+   │   ├── supervisor_schedule.html
+   │   ├── team_staff_list.html
+   │   ├── view_schedule.html
+   │   ├── components/
+   │   └── partial/
+   │
+   └── staff/
+       ├── profile.html
+       └── staff_list.html
 
