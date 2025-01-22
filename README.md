@@ -9,7 +9,8 @@
 
 ## SHIFT TRACKER WORK FLOW 
 
-![shift flow ](https://github.com/user-attachments/assets/7a45708c-1fcd-4eb8-a22d-8ad5f3e1f240)
+![Shift tracker flow chart drawio](https://github.com/user-attachments/assets/28a93b60-fb60-4b57-8e4f-c7831f119e22)
+
 
 
 ## Project Structure
