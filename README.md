@@ -9,7 +9,8 @@
 
 ## SHIFT TRACKER WORK FLOW 
 
-![Shift_flow](https://github.com/user-attachments/assets/f2d1c22f-0472-4e5f-b04d-34cf022d8b83)
+![shift flow ](https://github.com/user-attachments/assets/7a45708c-1fcd-4eb8-a22d-8ad5f3e1f240)
+
 
 ## Project Structure
 
