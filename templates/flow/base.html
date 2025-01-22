@@ -13,6 +13,8 @@
 	<link href="{% static 'assets/css/default/app.min.css' %}" rel="stylesheet" />
 	<!-- ================== END core-css ================== -->
 	
+	
+
 	<!-- ================== BEGIN page-css ================== -->
 	<link href="{% static 'assets/plugins/jvectormap-next/jquery-jvectormap.css' %}" rel="stylesheet" />
 	<link href="{% static 'assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.css' %}" rel="stylesheet" />
@@ -20,6 +22,24 @@
 
 	<link href="{% static 'assets/plugins/intro.js/minified/introjs.min.css' %}" rel="stylesheet" />
 	<!-- ================== END page-css ================== -->
+
+	{% comment %} <link href="{% static 'assets/css/notification.css' %}" rel="stylesheet" /> {% endcomment %}
+
+	{% comment %} <script>
+		document.addEventListener('DOMContentLoaded', function() {
+			const notifications = document.querySelectorAll('.notification-container > div');
+			notifications.forEach(notification => {
+				setTimeout(() => {
+					notification.style.opacity = '0';
+					notification.style.transform = 'translateX(100%)';
+					setTimeout(() => {
+						notification.remove();
+					}, 500);
+				}, 2000);
+			});
+		});
+	</script> {% endcomment %}
+
 </head>
 <body>
 	<!-- BEGIN #loader -->
@@ -35,7 +55,7 @@
 			{% include 'flow/partial/navbar.html' %}
 		</div>
 		<!-- END #header -->
-	
+		
 		<!-- BEGIN #sidebar -->
 		<div id="sidebar" class="app-sidebar" data-bs-theme="dark">
 			{% include 'flow/partial/sidebar.html' %}
@@ -54,7 +74,12 @@
             &copy; {% now "Y" %} JAY & OAKS. All right reserved <span style="float: right;">v1.0.0</span>
         </div> {% endcomment %}
 		<!-- END #footer -->
-			
+		<!-- BEGIN #footer -->
+			<!-- BEGIN #footer -->
+<div id="footer" class="app-footer m-0" style="text-align: left; position: fixed; bottom: 0; left: 220px; right: 0; padding: 15px 20px; background-color: #fff; border-top: 1px solid #dee2e6; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);">
+    © {% now "Y" %} JAY & OAKS. All right reserved <span style="float: right;">v1.0.0</span>
+</div>
+<!-- END #footer -->
 		</div>
 		<!-- END #content -->
 		
@@ -68,6 +93,7 @@
     <script src="{% static 'assets/js/vendor.min.js' %}"></script>
     <script src="{% static 'assets/js/app.min.js' %}"></script>
     <!-- ================== END core-js ================== -->
+	
 
     <!-- ================== BEGIN page-js ================== -->
     <script src="{% static 'assets/plugins/gritter/js/jquery.gritter.js' %}"></script>

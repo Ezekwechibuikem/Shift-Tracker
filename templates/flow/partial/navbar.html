@@ -13,9 +13,11 @@
 <!-- BEGIN header-nav -->
 <div class="navbar-nav">
     <div class="navbar-item dropdown">
-        <a href="#" data-bs-toggle="dropdown" class="navbar-link dropdown-toggle icon">
+        <a href="{% url 'flow:current_schedule' %}" data-bs-toggle="dropdown" class="navbar-link dropdown-toggle icon">
             <i class="fa fa-bell"></i>
-            <span class="badge">5</span>
+            {% if new_schedules_count > 0 %}
+                <span class="badge bg-danger rounded-pill ms-auto pb-4px">{{ new_schedules_count }}</span>
+            {% endif %}
         </a>
     </div>
     <div class="navbar-item navbar-user dropdown">
@@ -26,18 +28,15 @@
             </span>
         </a>
         <div class="dropdown-menu dropdown-menu-end me-1">
-            
                 <a href="{% url 'authentication:profile' %}" class="dropdown-item">View Profile</a>
-            
-            {% if user_is_supervisor or user.is_admin %}
-            <a href="email_inbox.html" class="dropdown-item d-flex align-items-center">
-                Inbox
-                <span class="badge bg-danger rounded-pill ms-auto pb-4px">2</span> 
-            </a>
-            {% endif %}
+                <a href="{% url 'flow:current_schedule' %}" class="dropdown-item d-flex align-items-center">
+                    Inbox
+                    {% if new_schedules_count > 0 %}
+                        <span class="badge bg-danger rounded-pill ms-auto pb-4px">{{ new_schedules_count }}</span>
+                    {% endif %}
+                </a>
             <div class="dropdown-divider"></div>
             <a href="{% url 'authentication:logout' %}" class="dropdown-item">Log Out</a>
         </div>
     </div>
 </div>
-<!-- END header-nav -->

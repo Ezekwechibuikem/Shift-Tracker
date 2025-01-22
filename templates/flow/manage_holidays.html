@@ -1,0 +1,70 @@
+{% extends 'flow/base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="text-center mb-6 border p-4 rounded-lg shadow-sm">
+        <h1 class="text-2xl font-bold">Manage Holidays</h1>
+    </div>
+
+    <!-- Add Holiday Form -->
+    <div class="bg-white shadow rounded-lg p-6 mb-8 max-w-xl mx-auto">
+        <h2 class="text-xl font-semibold mb-4">Add New Holiday</h2>
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="grid gap-6">
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">
+                        Holiday Name
+                    </label>
+                    {{ form.name }}
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">
+                        Date
+                    </label>
+                    {{ form.date }}
+                </div>
+            </div>
+            
+            <div class="mt-6">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    Add Holiday
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Upcoming Holidays List -->
+    <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">Upcoming Holidays</h2>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="py-3 px-4 text-left font-semibold">Date</th>
+                        <th class="py-3 px-4 text-left font-semibold">Holiday Name</th>
+                        <th class="py-3 px-4 text-left font-semibold">Created by</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for holiday in upcoming_holidays %}
+                        <tr class="border-t hover:bg-gray-50">
+                            <td class="py-3 px-4">{{ holiday.date|date:"l, F j, Y" }}</td>
+                            <td class="py-3 px-4">{{ holiday.name }}</td>
+                            <td class="py-3 px-4">{{ holiday.created_by.get_full_name }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3" class="py-3 px-4 text-center text-gray-500">
+                                No upcoming holidays scheduled.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends 'flow/base.html' %}
+{% load schedule_filters %}
+
+{% block content %}
+<div class="container">
+    <!-- Schedule Selection Dropdown -->
+    {% if user.is_supervisor or user.is_admin %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h4 class="card-title mb-0">
+                        View Schedules
+                    </h4>
+                </div>
+                <div class="col-md-6">
+                    <select class="form-select" onchange="window.location.href=this.value">
+                        {% for s in all_schedules %}
+                            <option value="{% url 'flow:view_schedule' s.id %}" 
+                                    {% if s.id == schedule.id %}selected{% endif %}>
+                                Week of {{ s.start_date|date:"M d, Y" }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Current Schedule Display -->
+    <div class="card">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h4 class="card-title mb-0">
+                Schedule for Week of {{ schedule.start_date|date:"M d, Y" }}
+            </h4>
+            {% if user.is_supervisor %}
+            <a href="{% url 'flow:generate_schedule' %}" class="btn btn-primary">
+                Generate New Schedule
+            </a>
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="bg-light">Team/Staff</th>
+                            {% for date in date_range %}
+                            <th class="text-center bg-light">
+                                {{ date|date:"l" }}<br>
+                                <small>{{ date|date:"M d" }}</small>
+                            </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% regroup shifts by staff.team as team_shifts %}
+                        {% for team in team_shifts %}
+                            <!-- Team Header -->
+                            <tr>
+                                <th colspan="{{ date_range|length|add:1 }}" class="bg-light">
+                                    {{ team.grouper }}
+                                </th>
+                            </tr>
+                            <!-- Staff Rows -->
+                            {% regroup team.list by staff as staff_shifts %}
+                            {% for staff_group in staff_shifts %}
+                                <tr>
+                                    <td>{{ staff_group.grouper.first_name }} {{ staff_group.grouper.last_name }}</td>
+                                    {% for date in date_range %}
+                                        <td class="text-center">
+                                            {% for shift in staff_group.list %}
+                                                {% if shift.date == date %}
+                                                    {% if shift.is_off_day %}
+                                                        <span class="badge bg-danger">Off Day</span>
+                                                    {% else %}
+                                                        <span class="badge bg-success">On Duty</span>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        {% empty %}
+                            <tr>
+                                <td colspan="{{ date_range|length|add:1 }}" class="text-center">
+                                    No shifts scheduled for this week.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

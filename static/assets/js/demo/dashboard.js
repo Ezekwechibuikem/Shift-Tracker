@@ -282,7 +282,7 @@ var handleDashboardGritterNotification = function() {
 			text: 'Delighted to have you back on Shift Tracker, your reliable tool for managing shifts. Stay organized and track effortlessly.',
 			image: '',
 			sticky: false,
-			time: 2000,
+			time: 3000,
 			class_name: 'my-sticky-class'
 		});
 	}, 1000);

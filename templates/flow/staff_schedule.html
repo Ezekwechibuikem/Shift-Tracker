@@ -1,0 +1,47 @@
+{% extends 'flow/base.html' %}
+{% load schedule_filters %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header bg-white">
+            <h4 class="card-title mb-0">
+                Weekly Schedule ({{ schedule.start_date|date:"M d" }} - {{ schedule.end_date|date:"M d, Y" }})
+            </h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            {% for date in date_range %}
+                            <th class="text-center">
+                                {{ date|date:"l" }}<br>
+                                <small>{{ date|date:"M d" }}</small>
+                            </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            {% for date in date_range %}
+                            <td class="text-center align-middle">
+                                {% for shift in shifts %}
+                                    {% if shift.date == date %}
+                                        {% if shift.is_off_day %}
+                                            <span class="badge bg-danger">Off Day</span>
+                                        {% else %}
+                                            <span class="badge bg-success">On Duty</span>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

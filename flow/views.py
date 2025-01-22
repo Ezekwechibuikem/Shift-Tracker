@@ -11,6 +11,8 @@ from authentication.models import CustomUser
 from .models import SupervisorAssignment, WeeklySchedule, StaffShift, Holiday, Attendance
 from .forms import SupervisorAssignmentForm, WeeklyScheduleGenerationForm, HolidayForm, ManualScheduleEditForm
 from .utils import ScheduleGenerator
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 
 @login_required
@@ -42,6 +44,12 @@ def supervisor_dashboard(request):
         'search_query': search_query,
     }
     return render(request, 'flow/supervisor_dashboard.html', context)
+
+@require_POST
+def clear_message(request):
+    if 'gritter_message' in request.session:
+        del request.session['gritter_message']
+    return JsonResponse({'status': 'ok'})
 
 @login_required
 def assign_staff(request, supervisor_id):
@@ -140,7 +148,6 @@ def team_staff_list(request):
 
 @login_required
 def generate_schedule(request):
-    """View for supervisors to generate weekly schedules"""
     if not request.user.is_supervisor():
         messages.error(request, "Access denied. Supervisor privileges required.")
         return redirect('authentication:home')
@@ -151,31 +158,33 @@ def generate_schedule(request):
             try:
                 start_date = form.cleaned_data['start_date']
                 
-                # Check if schedule already exists for this week
                 existing_schedule = WeeklySchedule.objects.filter(
                     supervisor=request.user,
                     start_date=start_date
                 ).first()
                 
                 if existing_schedule:
-                    messages.error(request, "A schedule already exists for this week.")
+                    messages.warning(request, "A schedule already exists for this week.")
                     return redirect('flow:view_schedule', schedule_id=existing_schedule.id)
                 
-                # Generate the schedule
                 generator = ScheduleGenerator(request.user, start_date)
                 schedule = generator.generate_schedule()
+
+                # Store success message in session for Gritter
+                request.session['gritter_message'] = {
+                    'title': 'Success!',
+                    'message': f'Schedule generated for week of {start_date.strftime("%B %d, %Y")}',
+                    'type': 'success'
+                }
                 
-                messages.success(request, "Schedule generated successfully!")
                 return redirect('flow:view_schedule', schedule_id=schedule.id)
             
             except Exception as e:
                 messages.error(request, f"Error generating schedule: {str(e)}")
     else:
-        # Default to next Sunday if no date specified
         next_sunday = timezone.now().date()
         while next_sunday.weekday() != 6:
             next_sunday += timedelta(days=1)
-        
         form = WeeklyScheduleGenerationForm(initial={'start_date': next_sunday})
     
     context = {
@@ -188,41 +197,63 @@ def view_schedule(request, schedule_id=None):
     """View to display weekly schedule"""
     user = request.user
     
-    if schedule_id:
-        schedule = get_object_or_404(WeeklySchedule, id=schedule_id)
-    else:
-        # Get current or next schedule
-        schedule = WeeklySchedule.objects.filter(
-            start_date__lte=timezone.now().date(),
-            end_date__gte=timezone.now().date()
-        ).first()
-    
-    if not schedule:
-        if user.is_supervisor():
-            messages.info(request, "No schedule found. Generate a new schedule.")
-            return redirect('flow:generate_schedule')
+    try:
+        # Get the schedule
+        if schedule_id:
+            schedule = get_object_or_404(WeeklySchedule, id=schedule_id)
         else:
-            messages.info(request, "No current schedule found.")
-            return redirect('authentication:home')
-    
-    # Get shifts grouped by team
-    shifts = StaffShift.objects.filter(
-        schedule=schedule
-    ).select_related('staff').order_by('staff__team', 'staff__first_name')
-    
-    # Get holidays during this period
-    holidays = Holiday.objects.filter(
-        date__range=[schedule.start_date, schedule.end_date]
-    )
-    
-    context = {
-        'schedule': schedule,
-        'shifts': shifts,
-        'holidays': holidays,
-        'date_range': [schedule.start_date + timedelta(days=x) for x in range(7)],
-    }
-    return render(request, 'flow/view_schedule.html', context)
+            current_date = timezone.now().date()
+            schedule = WeeklySchedule.objects.filter(
+                start_date__lte=current_date,
+                end_date__gte=current_date
+            ).first() or WeeklySchedule.objects.filter(
+                start_date__gt=current_date
+            ).order_by('start_date').first()
 
+        if not schedule:
+            if user.is_supervisor():
+                messages.info(request, "No schedule found. Generate a new schedule.")
+                return redirect('flow:generate_schedule')
+            else:
+                messages.info(request, "No current schedule found.")
+                return redirect('authentication:home')
+
+        # Get all schedules for pagination (for supervisors and admins)
+        all_schedules = []
+        if user.is_supervisor() or user.is_admin():
+            all_schedules = WeeklySchedule.objects.all().order_by('-start_date')
+
+        # Get shifts based on user role
+        if user.is_staff_member():
+            shifts = StaffShift.objects.filter(
+                schedule=schedule,
+                staff=user
+            ).select_related('staff').order_by('date')
+            template_name = 'flow/staff_schedule.html'
+        else:
+            # For supervisors and admins, get all shifts grouped by team
+            shifts = StaffShift.objects.filter(
+                schedule=schedule
+            ).select_related('staff').order_by('staff__team', 'staff__first_name', 'date')
+            template_name = 'flow/supervisor_schedule.html'  
+
+        date_range = [schedule.start_date + timedelta(days=x) for x in range(7)]
+
+        context = {
+            'schedule': schedule,
+            'all_schedules': all_schedules,  
+            'shifts': shifts,
+            'date_range': date_range,
+            'user_role': user.role,
+        }
+        
+        return render(request, template_name=template_name, context=context)
+        
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        messages.error(request, f"Error viewing schedule: {str(e)}")
+        return redirect('authentication:home')
+    
 @login_required
 def manage_holidays(request):
     """View for supervisors to manage holidays"""

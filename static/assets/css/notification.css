@@ -1,0 +1,39 @@
+<style>
+    @keyframes slideIn {
+        0% {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        100% {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes glitter {
+        0% { background-color: #f0fdf4; }
+        50% { background-color: #dcfce7; }
+        100% { background-color: #f0fdf4; }
+    }
+
+    .animate-success {
+        animation: slideIn 0.5s ease-out forwards,
+                   glitter 2s ease-in-out infinite;
+        background-color: #f0fdf4;
+        border-color: #4ade80;
+        color: #15803d;
+    }
+
+    .notification-container {
+        pointer-events: none;
+    }
+
+    .success-icon {
+        animation: bounce 1s ease-in-out;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+    }
+</style>

@@ -1,9 +1,12 @@
+from urllib import request
 from django.contrib.auth import login as auth_login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import Group
+
+from flow.models import StaffShift, WeeklySchedule
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, PasswordResetRequestForm, OTPVerificationForm, SetNewPasswordForm, UserEditForm
 import random
 import string
@@ -58,7 +61,19 @@ def logout_view(request):
 
 @login_required
 def home(request):
-    return render(request, 'flow/home.html')
+       context = {
+        'total_staff_count': CustomUser.objects.filter(role='STAFF').count(),
+        'supervisor_count': CustomUser.objects.filter(role='SUPERVISOR').count(),
+        'active_schedule_count': WeeklySchedule.objects.filter(
+            start_date__lte=timezone.now().date(),
+            end_date__gte=timezone.now().date()
+        ).count(),
+        'staff_on_duty_count': StaffShift.objects.filter(
+            date=timezone.now().date(),
+            is_off_day=False
+        ).count()
+    } 
+       return render(request, 'flow/home.html', context)
 
 @login_required
 def intro(request):

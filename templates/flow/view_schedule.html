@@ -1,0 +1,60 @@
+{% comment %} {% extends 'flow/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h4 class="card-title mb-0">
+                Weekly Schedule ({{ schedule.start_date|date:"M d" }} - {{ schedule.end_date|date:"M d, Y" }})
+            </h4>
+            {% if user.is_supervisor %}
+            <a href="{% url 'flow:generate_schedule' %}" class="btn btn-primary">Generate New Schedule</a>
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Staff Name</th>
+                            {% for date in date_range %}
+                            <th class="text-center">
+                                {{ date|date:"l" }}<br>
+                                <small>{{ date|date:"M d" }}</small>
+                            </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for team, staff_members in shifts_by_team.items %}
+                        <tr class="bg-light">
+                            <th colspan="{{ date_range|length|add:1 }}">{{ team }}</th>
+                        </tr>
+                        {% for staff_id, staff_data in staff_members.items %}
+                        <tr>
+                            <td>{{ staff_data.name }}</td>
+                            {% for date in date_range %}
+                            <td class="text-center">
+                                {% with shift=staff_data.shifts|get_item:date %}
+                                {% if shift %}
+                                    {% if shift.is_off_day %}
+                                    <span class="badge bg-danger">Off Day</span>
+                                    {% else %}
+                                    <span class="badge bg-success">On Duty</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="badge bg-secondary">Not Set</span>
+                                {% endif %}
+                                {% endwith %}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} {% endcomment %}
