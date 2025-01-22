@@ -11,6 +11,17 @@
 
 ![Shift tracker flow chart drawio](https://github.com/user-attachments/assets/28a93b60-fb60-4b57-8e4f-c7831f119e22)
 
+## LOGIN PAGE
+
+![login](https://github.com/user-attachments/assets/b9128313-fc1a-4681-9632-0e469b129581)
+
+## DASHBOARD
+
+![Dashboard](https://github.com/user-attachments/assets/38e68d79-2c43-4879-9c1d-602e1cd6156b)
+
+## ALLOCATED SHIFTS TO STAFF
+
+![Shift page](https://github.com/user-attachments/assets/d3a0fb1d-9479-49c6-a543-23f91db1ea96)
 
 
 ## Project Structure
