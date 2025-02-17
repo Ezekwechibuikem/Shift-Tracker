@@ -99,3 +99,19 @@ Shift-Tracker/
        ├── profile.html
        └── staff_list.html
 
+## Setup and Installations 
+    - Clone the repository (git clone [your-repository-url])
+    - cd Shift-Tracker
+    - python -m venv myenv
+        source myenv/bin/activate  # On Linux/Mac
+            # OR
+        myenv\Scripts\activate  # On Windows
+    - pip install -r requirements.txt
+    - Connect and Verify you database connection 
+    - python manage.py migrate  # On Windows
+            # OR
+        python3 manage.py migrate # On Linux/Mac
+    - python manage.py runserver # On Windows
+            # OR
+      python3 manage.py runserver
+     
