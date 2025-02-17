@@ -12,18 +12,20 @@
 <!-- END navbar-header -->
 <!-- BEGIN header-nav -->
 <div class="navbar-nav">
-    <div class="navbar-item dropdown">
-        <a href="{% url 'flow:current_schedule' %}" data-bs-toggle="dropdown" class="navbar-link dropdown-toggle icon">
-            <i class="fa fa-bell"></i>
-            {% if new_schedules_count > 0 %}
-                <span class="badge bg-danger rounded-pill ms-auto pb-4px">{{ new_schedules_count }}</span>
-            {% endif %}
-        </a>
-    </div>
+    {% if user.is_staff_member or user.is_admin %}
+        <div class="navbar-item dropdown">
+            <a href="{% url 'flow:current_schedule' %}" data-bs-toggle="dropdown" class="navbar-link dropdown-toggle icon">
+                <i class="fa fa-bell"></i>
+                {% if new_schedules_count > 0 %}
+                    <span class="badge bg-danger rounded-pill ms-auto pb-4px">{{ new_schedules_count }}</span>
+                {% endif %}
+            </a>
+        </div>
+    {% endif %}
     <div class="navbar-item navbar-user dropdown">
         <a href="#" class="navbar-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
             <span>
-                <span class="d-none d-md-inline"><b>{{ user.last_name }} {{ user.first_name }}</b></span>
+                <i class="fa fa-user me-2"></i><span class="d-none d-md-inline"><b>{{ user.first_name }}</b></span>
                 <b class="caret"></b>
             </span>
         </a>
