@@ -67,37 +67,38 @@ Shift-Tracker/
 │   ├── urls.py
 │   └── wsgi.py
 │
-└── templates/
-   ├── authentication/
-   │   ├── edit_user.html
-   │   ├── login.html
-   │   ├── password_reset_request.html
-   │   ├── register.html
-   │   ├── set_new_password.html
-   │   ├── user_list.html
-   │   └── verify_otp.html
-   │
-   ├── flow/
-   │   ├── admin_contact.html
-   │   ├── assign_staff.html
-   │   ├── base.html
-   │   ├── create_schedule.html
-   │   ├── edit_schedule.html
-   │   ├── generate_schedule.html
-   │   ├── home.html
-   │   ├── intro.html
-   │   ├── manage_holidays.html
-   │   ├── staff_schedule.html
-   │   ├── supervisor_dashboard.html
-   │   ├── supervisor_schedule.html
-   │   ├── team_staff_list.html
-   │   ├── view_schedule.html
-   │   ├── components/
-   │   └── partial/
-   │
-   └── staff/
-       ├── profile.html
-       └── staff_list.html
+└templates/
+├── authentication
+│   ├── edit_user.html
+│   ├── login.html
+│   ├── password_reset_request.html
+│   ├── register.html
+│   ├── set_new_password.html
+│   ├── user_list.html
+│   └── verify_otp.html
+├── flow
+│   ├── admin_contact.html
+│   ├── assign_staff.html
+│   ├── base.html
+│   ├── components
+│   │   └── notification.html
+│   ├── create_schedule.html
+│   ├── edit_schedule.html
+│   ├── generate_schedule.html
+│   ├── home.html
+│   ├── intro.html
+│   ├── manage_holidays.html
+│   ├── partial
+│   │   ├── navbar.html
+│   │   └── sidebar.html
+│   ├── staff_schedule.html
+│   ├── supervisor_dashboard.html
+│   ├── supervisor_schedule.html
+│   ├── team_staff_list.html
+│   └── view_schedule.html
+└── staff
+    ├── profile.html
+    └── staff_list.html
 
 ## Setup and Installations 
     - Clone the repository (git clone [your-repository-url])
@@ -106,12 +107,16 @@ Shift-Tracker/
         source myenv/bin/activate  # On Linux/Mac
             # OR
         myenv\Scripts\activate  # On Windows
+
     - pip install -r requirements.txt
     - Connect and Verify you database connection 
     - python manage.py migrate  # On Windows
             # OR
         python3 manage.py migrate # On Linux/Mac
+
     - python manage.py runserver # On Windows
             # OR
       python3 manage.py runserver
+
+     ## Remember to ask for the Secrete key.. Send a Mail @ezekwechibuikem@gmail.com
      
