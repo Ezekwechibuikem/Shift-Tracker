@@ -2,36 +2,46 @@
 
 {% block content %}
 <div class="container">
-    <h2>Staff List</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>S/N</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Department</th>
-                <th>Unit</th>
-                <th>Role</th>
-                <th>Team</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for staff in staff_members %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ staff.first_name }} {{ staff.last_name }}</td>
-                <td>{{ staff.email }}</td>
-                <td>{{ staff.department }}</td>
-                <td>{{ staff.unit }}</td>
-                <td>{{ staff.get_role_display }}</td>
-                <td>{{ staff.get_team_display|default:"-" }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6">No staff members found.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="card shadow-sm rounded-4 border-0">
+        <div class="card-header bg-dark text-white py-4 rounded-top">
+            <h3 class="mb-0">Staff List</h3>
+        </div>
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">S/N</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Department</th>
+                            <th scope="col">Unit</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Team</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for staff in staff_members %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ staff.first_name }} {{ staff.last_name }}</td>
+                            <td>{{ staff.email }}</td>
+                            <td>{{ staff.department }}</td>
+                            <td>{{ staff.unit }}</td>
+                            <td>{{ staff.get_role_display }}</td>
+                            <td>{{ staff.get_team_display|default:"-" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                <strong>No staff members found.</strong>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

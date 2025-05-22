@@ -1,44 +1,72 @@
 {% load static %}
 
-<!-- BEGIN navbar-header -->
-<div class="navbar-header">
-    <a href="{% url 'authentication:home' %}" class="navbar-brand"><span class="navbar-logo"></span> <b class="me-3px">Shift</b> Tracker</a>
-    <button type="button" class="navbar-mobile-toggler" data-toggle="app-sidebar-mobile">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
+<!-- BEGIN: Navbar Header -->
+<div class="navbar-header d-flex align-items-center justify-content-between border-bottom">
+    <a href="{% url 'authentication:home' %}" class="navbar-brand fw-bold d-flex align-items-center">
+        <span class="navbar-logo me-2"></span>
+        <span><b class="me-1">Shift</b>Tracker</span>
+    </a>
+    <button class="navbar-toggler d-md-none border-0" type="button" data-toggle="app-sidebar-mobile">
+        <span class="navbar-toggler-icon d-block"></span>
+        <span class="navbar-toggler-icon d-block"></span>
+        <span class="navbar-toggler-icon d-block"></span>
     </button>
 </div>
-<!-- END navbar-header -->
-<!-- BEGIN header-nav -->
-<div class="navbar-nav">
+<!-- END: Navbar Header -->
+
+<!-- BEGIN: Header Navigation -->
+<div class="navbar-nav ms-auto d-flex align-items-center gap-3 px-3">
+
     {% if user.is_staff_member or user.is_admin %}
-        <div class="navbar-item dropdown">
-            <a href="{% url 'flow:current_schedule' %}" data-bs-toggle="dropdown" class="navbar-link dropdown-toggle icon">
-                <i class="fa fa-bell"></i>
-                {% if new_schedules_count > 0 %}
-                    <span class="badge bg-danger rounded-pill ms-auto pb-4px">{{ new_schedules_count }}</span>
-                {% endif %}
-            </a>
-        </div>
-    {% endif %}
-    <div class="navbar-item navbar-user dropdown">
-        <a href="#" class="navbar-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
-            <span>
-                <i class="fa fa-user me-2"></i><span class="d-none d-md-inline"><b>{{ user.first_name }}</b></span>
-                <b class="caret"></b>
-            </span>
+    <!-- Notification Bell -->
+    <div class="nav-item dropdown">
+        <a href="{% url 'flow:current_schedule' %}" class="nav-link position-relative" data-bs-toggle="dropdown">
+            <i class="fa fa-bell fs-5"></i>
+            {% if new_schedules_count > 0 %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {{ new_schedules_count }}
+                </span>
+            {% endif %}
         </a>
-        <div class="dropdown-menu dropdown-menu-end me-1">
-                <a href="{% url 'authentication:profile' %}" class="dropdown-item">View Profile</a>
-                <a href="{% url 'flow:current_schedule' %}" class="dropdown-item d-flex align-items-center">
+    </div>
+    {% endif %}
+
+    <!-- User Dropdown -->
+    <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 px-3 py-2 rounded shadow-sm hover-shadow text-dark"
+            data-bs-toggle="dropdown"
+            style="background-color: #B2BEB5;">
+            <div class="d-flex align-items-center">
+                <i class="fa fa-user-circle fa-lg text-black me-2"></i>
+                <span class="fw-semibold d-none d-md-inline">{{ user.first_name }}</span>
+            </div>
+            <i class="fa fa-chevron-down text-muted"></i>
+        </a>
+     
+        <ul class="dropdown-menu dropdown-menu-end p-0">
+            <li class="px-3 py-2 border-bottom">
+                <div class="d-flex flex-column">
+                    <span class="fw-semibold">{{ user.get_full_name }}</span>
+                    <small class="text-muted">{{ user.email }}</small>
+                    <small class="text-muted">Role: {{ user.get_role_display }}</small>
+                </div>
+            </li>
+
+            <li><a class="dropdown-item" href="{% url 'authentication:profile' %}">View Profile</a></li>
+            <li>
+                <a class="dropdown-item d-flex justify-content-between align-items-center" href="{% url 'flow:current_schedule' %}">
                     Inbox
                     {% if new_schedules_count > 0 %}
-                        <span class="badge bg-danger rounded-pill ms-auto pb-4px">{{ new_schedules_count }}</span>
+                        <span class="badge rounded-pill bg-danger">{{ new_schedules_count }}</span>
                     {% endif %}
                 </a>
-            <div class="dropdown-divider"></div>
-            <a href="{% url 'authentication:logout' %}" class="dropdown-item">Log Out</a>
-        </div>
+            </li>
+
+            <li><a class="dropdown-item" href="{% url 'authentication:intro' %}">Help Center</a></li>
+
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'authentication:logout' %}">Log Out</a></li>
+        </ul>
     </div>
 </div>
+<!-- END: Header Navigation -->
