@@ -61,7 +61,10 @@ def logout_view(request):
 
 @login_required
 def home(request):
-       context = {
+    """Home page for authenticated users"""
+    staff_details = request.user
+    context = {
+        'staff_details': staff_details,
         'total_staff_count': CustomUser.objects.filter(role='STAFF').count(),
         'supervisor_count': CustomUser.objects.filter(role='SUPERVISOR').count(),
         'active_schedule_count': WeeklySchedule.objects.filter(
@@ -73,7 +76,7 @@ def home(request):
             is_off_day=False
         ).count()
     } 
-       return render(request, 'flow/home.html', context)
+    return render(request, 'flow/home.html', context)
 
 @login_required
 def intro(request):

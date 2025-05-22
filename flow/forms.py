@@ -1,5 +1,6 @@
 from django import forms
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 from datetime import timedelta, datetime
 from .models import SupervisorAssignment, WeeklySchedule, Holiday, StaffShift
 from authentication.models import CustomUser
@@ -28,7 +29,7 @@ class SupervisorAssignmentForm(forms.Form):
 class WeeklyScheduleGenerationForm(forms.Form):
     start_date = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date'}),
-        help_text="Schedule must start on a Sunday"
+        help_text=mark_safe('<span style="color: red;">Schedule must start on a Sunday</span>')
     )
 
     def clean_start_date(self):
