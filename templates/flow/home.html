@@ -1,69 +1,113 @@
 {% extends 'flow/base.html' %}
 
 {% block content %}
-    <!-- BEGIN breadcrumb -->
-    <ol class="breadcrumb float-xl-end">
-        <li class="breadcrumb-item"><a href="javascript:;">Home</a></li>
-        <li class="breadcrumb-item active">Dashboard</li>
-    </ol>
-    <!-- END breadcrumb -->
-    <!-- BEGIN page-header -->
-    <h1 class="page-header">Dashboard <small>welcome to the home page </small></h1>
-    <!-- END page-header -->
-    
-    <!-- BEGIN row -->
-    <div class="row">
-        <div class="col-xl-3 col-md-6">
-            <div class="widget widget-stats bg-blue">
-                <div class="stats-icon"><i class="fa fa-users"></i></div>
-                <div class="stats-info">
-                    <h4>TOTAL STAFF</h4>
-                    <p>{{ total_staff_count }}</p>    
-                </div>
-                <div class="stats-link">
-                    <a href="{% url 'authentication:staff_list' %}">View Staff <i class="fa fa-arrow-alt-circle-right"></i></a>
-                </div>
+<ol class="breadcrumb float-xl-end">
+    <li class="breadcrumb-item"><a href="#">Home</a></li>
+    <li class="breadcrumb-item active">Dashboard</li>
+</ol>
+
+<h1 class="page-header">Dashboard <small>Welcome back, {{ request.user.first_name }}!</small></h1>
+
+<!-- Welcome Panel -->
+<div class="alert d-flex align-items-center justify-content-between mb-4 shadow-sm" style="background-color: #f8f9fa;">
+    <div>
+        <h5 class="mb-1">Hello, {{ request.user.get_full_name }}!</h5>
+        <p class="mb-0">Role: <strong>{{ request.user.get_role_display }}</strong> | Department: <strong>{{ request.user.department }}</strong></p>
+    </div>
+    <div>
+        <small>{% now "l, d M, Y." %}</small>
+    </div>
+</div>
+
+
+<!-- Metric Cards -->
+<div class="row">
+    {% comment %} Key metric widgets {% endcomment %}
+    <div class="col-xl-3 col-md-6">
+        <div class="widget widget-stats bg-blue">
+            <div class="stats-icon"><i class="fa fa-users"></i></div>
+            <div class="stats-info">
+                <h4>TOTAL STAFF</h4>
+                <p>{{ total_staff_count }}</p>
             </div>
-        </div>
-    
-        <div class="col-xl-3 col-md-6">
-            <div class="widget widget-stats bg-purple">
-                <div class="stats-icon"><i class="fa fa-user-tie"></i></div>
-                <div class="stats-info">
-                    <h4>TOTAL SUPERVISORS</h4>
-                    <p>{{ supervisor_count }}</p>    
-                </div>
-                <div class="stats-link">
-                    <a href="{% url 'flow:supervisor_dashboard' %}">View Supervisors <i class="fa fa-arrow-alt-circle-right"></i></a>
-                </div>
-            </div>
-        </div>
-    
-        <div class="col-xl-3 col-md-6">
-            <div class="widget widget-stats bg-success">
-                <div class="stats-icon"><i class="fa fa-calendar-check"></i></div>
-                <div class="stats-info">
-                    <h4>ACTIVE SCHEDULES</h4>
-                    <p>{{ active_schedule_count }}</p>    
-                </div>
-                <div class="stats-link">
-                    <a href="{% url 'flow:current_schedule' %}">View Schedule <i class="fa fa-arrow-alt-circle-right"></i></a>
-                </div>
-            </div>
-        </div>
-    
-        <div class="col-xl-3 col-md-6">
-            <div class="widget widget-stats bg-warning">
-                <div class="stats-icon"><i class="fa fa-clock"></i></div>
-                <div class="stats-info">
-                    <h4>STAFF ON DUTY TODAY</h4>
-                    <p>{{ staff_on_duty_count }}</p>    
-                </div>
-                <div class="stats-link">
-                    <a href="{% url 'flow:current_schedule' %}">View Today <i class="fa fa-arrow-alt-circle-right"></i></a>
-                </div>
+            <div class="stats-link">
+                <a href="{% url 'authentication:staff_list' %}">View Staff <i class="fa fa-arrow-alt-circle-right"></i></a>
             </div>
         </div>
     </div>
-    <!-- END row -->
-{% endblock content %}
+
+    <div class="col-xl-3 col-md-6">
+        <div class="widget widget-stats bg-purple">
+            <div class="stats-icon"><i class="fa fa-user-tie"></i></div>
+            <div class="stats-info">
+                <h4>TOTAL SUPERVISORS</h4>
+                <p>{{ supervisor_count }}</p>
+            </div>
+            <div class="stats-link">
+                <a href="{% url 'flow:supervisor_dashboard' %}">View Supervisors <i class="fa fa-arrow-alt-circle-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="widget widget-stats bg-success">
+            <div class="stats-icon"><i class="fa fa-calendar-check"></i></div>
+            <div class="stats-info">
+                <h4>ACTIVE SCHEDULES</h4>
+                <p>{{ active_schedule_count }}</p>
+            </div>
+            <div class="stats-link">
+                <a href="{% url 'flow:current_schedule' %}">View Schedule <i class="fa fa-arrow-alt-circle-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="widget widget-stats bg-warning">
+            <div class="stats-icon"><i class="fa fa-clock"></i></div>
+            <div class="stats-info">
+                <h4>STAFFS ON DUTY TODAY</h4>
+                <p>{{ staff_on_duty_count }}</p>
+            </div>
+            <div class="stats-link">
+                <a href="{% url 'flow:current_schedule' %}">View Today <i class="fa fa-arrow-alt-circle-right"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity Table -->
+<div class="card mt-5 shadow-sm">
+    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 text-dark fw-semibold">Recent Assignments</h5>
+        {% comment %} <a href="{% url 'flow:assign_staff' 1 %}" class="btn btn-outline-primary btn-sm">View All</a> {% endcomment %}
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Staff Name</th>
+                    <th>Supervisor</th>
+                    <th>Team</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>#</td>
+                    <td>{{ staff_details.get_full_name }}</td>
+                    {% if staff_details.assigned_supervisor %}
+                    <td>{{ staff_details.assigned_supervisor.supervisor.get_full_name }}</td>
+                    {% else %}
+                        <td>No supervisor assigned</td>
+                    {% endif %}
+                    <td>{{ staff_details.get_team_display }}</td>
+                </tr>
+                {% comment %} <tr>
+                    <td colspan="5" class="text-center text-muted py-3">No recent assignments found.</td>
+                </tr> {% endcomment %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
