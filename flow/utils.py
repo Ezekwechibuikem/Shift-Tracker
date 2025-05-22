@@ -11,7 +11,7 @@ class ScheduleGenerator:
         self.end_date = start_date + timedelta(days=6)
 
     def assign_off_days(self, team_members):
-        """Assign one off day per staff member in a team"""
+        """Assign one off day per staff member in a team per week, but one staff member within the team must be present each day."""
         available_days = list(range(0, 6))  # Monday(0) to Saturday(5)
         assignments = {}
         

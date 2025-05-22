@@ -1,102 +1,106 @@
 {% extends 'flow/base.html' %}
 
 {% block content %}
-<div class="panel panel-inverse">
-    <div class="panel-heading">
-        <h4 class="panel-title">Generate Weekly Schedule</h4>
-    </div>
-    <div class="panel-body">
-        {% if staff_count == 0 %}
-        <div class="alert alert-warning alert-dismissible fade show">
-            <strong>Warning!</strong>
-            You need to have staff assigned to you before you can generate a schedule.
-            <hr class="mt-2 mb-2">
-            <a href="{% url 'flow:supervisor_dashboard' %}" class="btn btn-warning btn-sm">
-                <i class="fa fa-users me-1"></i> Assign Staff Members
-            </a>
+    <div class="panel panel-inverse">
+        <div class="panel-heading">
+            <h4 class="panel-title">Generate Weekly Schedule</h4>
         </div>
-        {% endif %}
-
-        <form method="post" class="form-horizontal">
-            {% csrf_token %}
-            
-            {% if form.non_field_errors %}
-            <div class="alert alert-danger">
-                {{ form.non_field_errors }}
+        <div class="panel-body">
+            {% if staff_count == 0 %}
+            <div class="alert alert-warning alert-dismissible fade show">
+                <strong>Warning!</strong>
+                You need to have staff assigned to you before you can generate a schedule.
+                <hr class="mt-2 mb-2">
+                <a href="{% url 'flow:supervisor_dashboard' %}" class="btn btn-warning btn-sm">
+                    <i class="fa fa-users me-1"></i> Assign Staff Members
+                </a>
             </div>
             {% endif %}
 
-            <div class="row mb-3">
-                <label class="form-label col-form-label col-md-3">Start Date (Sunday)</label>
-                <div class="col-md-6">
-                    <div class="input-group">
-                        {{ form.start_date }}
-                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                    </div>
-                    {% if form.start_date.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.start_date.errors }}
+            <form method="post" class="form-horizontal">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <div class="row mb-3">
+                    {% comment %} <label class="form-label col-form-label col-md-3">Start Date (Sunday)</label> {% endcomment %}
+                    <label class="form-label col-form-label col-md-3" 
+                        style="border: 1px solid #ccc; background-color: #f2f2f2; padding: 5px; border-radius: 1px;">
+                        Start Date (Sunday)
+                    </label>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            {{ form.start_date }}
+                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                         </div>
-                    {% endif %}
-                    {% if form.start_date.help_text %}
-                        <small class="form-text text-muted">
-                            {{ form.start_date.help_text }}
-                        </small>
-                    {% endif %}
-                    <small class="form-text text-muted">
-                        Schedule will start from this date
-                    </small>
+                        {% if form.start_date.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.start_date.errors }}
+                            </div>
+                        {% endif %}
+                        {% if form.start_date.help_text %}
+                            <small class="form-text text-muted">
+                                {{ form.start_date.help_text }}
+                            </small>
+                        {% endif %}
+                        {% comment %} <small class="form-text text-muted">
+                            Schedule will start from this date
+                        </small> {% endcomment %}
+                    </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="col-md-9 offset-md-3">
-                    <button type="submit" 
-                            class="btn btn-primary me-2"
-                            {% if staff_count == 0 %}disabled{% endif %}>
-                        <i class="fa fa-calendar-plus me-1"></i>
-                        Generate Schedule
-                    </button>
-                    <a href="{% url 'flow:supervisor_dashboard' %}" 
-                       class="btn btn-white">
-                        <i class="fa fa-times me-1"></i>
-                        Cancel
-                    </a>
+                <div class="row">
+                    <div class="col-md-9 offset-md-3">
+                        <button type="submit" 
+                                class="btn btn-primary me-2"
+                                {% if staff_count == 0 %}disabled{% endif %}>
+                            <i class="fa fa-calendar-plus me-1"></i>
+                            Generate Schedule
+                        </button>
+                        <a href="{% url 'flow:supervisor_dashboard' %}" 
+                        class="btn btn-white">
+                            <i class="fa fa-times me-1"></i>
+                            Cancel
+                        </a>
+                    </div>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
 
-<!-- Add DatePicker Initialization -->
-{% block scripts %}
-<script>
-    $(document).ready(function() {
-        var today = new Date();
-        var nextSunday = new Date();
-        
-        while (nextSunday.getDay() !== 0) {
-            nextSunday.setDate(nextSunday.getDate() + 1);
-        }
-
-        $("#id_start_date").datepicker({
-            todayHighlight: true,
-            autoclose: true,
-            daysOfWeekDisabled: "1,2,3,4,5,6",  
-            format: "dd/mm/yyyy",
-            startDate: nextSunday,  
-            clearBtn: false
-        }).on('changeDate', function(e) {
-           
-            var selectedDate = new Date(e.date);
-            if (selectedDate < today) {
-                alert("Cannot select past dates");
-                $(this).datepicker('setDate', nextSunday);
+    <!-- Add DatePicker Initialization -->
+    {% block scripts %}
+    <script>
+        $(document).ready(function() {
+            var today = new Date();
+            var nextSunday = new Date();
+            
+            while (nextSunday.getDay() !== 0) {
+                nextSunday.setDate(nextSunday.getDate() + 1);
             }
-        });
 
-        $("#id_start_date").datepicker('setDate', nextSunday);
-    });
-</script>
-{% endblock %}
+            $("#id_start_date").datepicker({
+                todayHighlight: true,
+                autoclose: true,
+                daysOfWeekDisabled: "1,2,3,4,5,6",  
+                format: "dd/mm/yyyy",
+                startDate: nextSunday,  
+                clearBtn: false
+            }).on('changeDate', function(e) {
+            
+                var selectedDate = new Date(e.date);
+                if (selectedDate < today) {
+                    alert("Cannot select past dates");
+                    $(this).datepicker('setDate', nextSunday);
+                }
+            });
+
+            $("#id_start_date").datepicker('setDate', nextSunday);
+        });
+    </script>
+    {% endblock %}
 {% endblock %}
