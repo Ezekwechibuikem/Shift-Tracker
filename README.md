@@ -15,9 +15,13 @@
 
 ![login](https://github.com/user-attachments/assets/b9128313-fc1a-4681-9632-0e469b129581)
 
-## DASHBOARD
+## DASHBOARD version 1.0.0
 
 ![Dashboard](https://github.com/user-attachments/assets/38e68d79-2c43-4879-9c1d-602e1cd6156b)
+
+## DASHBOARD version 1.0.1
+
+![home-V-1-1-2](https://github.com/user-attachments/assets/2cf69d40-95d6-4e69-9872-bf0e729f0c83)
 
 ## ALLOCATED SHIFTS TO STAFF
 
