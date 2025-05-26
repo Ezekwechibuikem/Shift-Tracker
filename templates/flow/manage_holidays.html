@@ -1,35 +1,57 @@
 {% extends 'flow/base.html' %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <div class="text-center mb-6 border p-4 rounded-lg shadow-sm">
-        <h1 class="text-2xl font-bold">Manage Holidays</h1>
+<div class="container mx-auto px-4 py-8" style="background: linear-gradient(135deg, #B2BEB5 0%, #ede9e3 100%); min-height: 100vh;">
+    <div class="text-center mb-6 border p-4 rounded-lg shadow-sm" style="background: rgba(252, 251, 249, 0.95); backdrop-filter: blur(15px); border: 1px solid rgba(248, 247, 244, 0.8); border-radius: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);">
+        <h1 class="text-2xl font-bold" style="color: #2a2925; font-weight: 700; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); display: flex; align-items: center; justify-content: center; gap: 12px;">
+            <i class="fas fa-calendar-alt" style="color: #3a3835; font-size: 2rem;"></i>
+            {% comment %} Manage Holidays {% endcomment %}
+            Holiday Page in Progress
+        </h1>
     </div>
 
     <!-- Add Holiday Form -->
-    <div class="bg-white shadow rounded-lg p-6 mb-8 max-w-xl mx-auto">
-        <h2 class="text-xl font-semibold mb-4">Add New Holiday</h2>
-        <form method="post">
+    <div class="bg-white shadow rounded-lg p-6 mb-8 max-w-xl mx-auto" style="background: rgba(252, 251, 249, 0.98); backdrop-filter: blur(20px); border-radius: 24px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(248, 247, 244, 0.6); padding: 3rem; transform: translateY(0); transition: all 0.3s ease;">
+        <h2 class="text-xl font-semibold mb-4" style="color: #2a2925; font-weight: 600; font-size: 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 10px;">
+            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #3a3835, #2a2925); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-plus" style="color: #f8f7f4; font-size: 1rem;"></i>
+            </div>
+            Add New Holiday
+        </h2>
+        <form method="post" style="position: relative;">
             {% csrf_token %}
             
-            <div class="grid gap-6">
-                <div>
-                    <label class="block text-gray-700 font-medium mb-2">
+            <div class="grid gap-6" style="gap: 2rem;">
+                <div style="position: relative;">
+                    <label class="block text-gray-700 font-medium mb-2" style="color: #3a3835; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-size: 0.95rem;">
+                        <i class="fas fa-tag" style="color: #2a2925;"></i>
                         Holiday Name
                     </label>
-                    {{ form.name }}
+                    <div style="position: relative;">
+                        {{ form.name }}
+                        <div style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #8a8782; pointer-events: none;">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                    </div>
                 </div>
                 
-                <div>
-                    <label class="block text-gray-700 font-medium mb-2">
+                <div style="position: relative;">
+                    <label class="block text-gray-700 font-medium mb-2" style="color: #3a3835; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-size: 0.95rem;">
+                        <i class="fas fa-calendar" style="color: #2a2925;"></i>
                         Date
                     </label>
-                    {{ form.date }}
+                    <div style="position: relative;">
+                        {{ form.date }}
+                        <div style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #8a8782; pointer-events: none;">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <div class="mt-6">
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            <div class="mt-6" style="margin-top: 2.5rem; text-align: center;">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" style="background: linear-gradient(135deg, #3a3835 0%, #2a2925 100%); color: #f8f7f4; padding: 14px 32px; border: none; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(42, 41, 37, 0.3); letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 8px; position: relative; overflow: hidden;">
+                    <i class="fas fa-plus-circle"></i>
                     Add Holiday
                 </button>
             </div>
@@ -37,28 +59,54 @@
     </div>
 
     <!-- Upcoming Holidays List -->
-    <div class="bg-white shadow rounded-lg p-6">
-        <h2 class="text-xl font-semibold mb-4">Upcoming Holidays</h2>
-        <div class="overflow-x-auto">
-            <table class="min-w-full bg-white">
-                <thead class="bg-gray-100">
+    <div class="bg-white shadow rounded-lg p-6" style="background: rgba(252, 251, 249, 0.98); backdrop-filter: blur(20px); border-radius: 24px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(248, 247, 244, 0.6); padding: 2.5rem; overflow: hidden;">
+        <h2 class="text-xl font-semibold mb-4" style="color: #2a2925; font-weight: 600; font-size: 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 12px; padding-bottom: 1rem; border-bottom: 2px solid #ede9e3;">
+            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #3a3835, #2a2925); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-list" style="color: #f8f7f4; font-size: 1rem;"></i>
+            </div>
+            Upcoming Holidays
+        </h2>
+        <div class="overflow-x-auto" style="border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);">
+            <table class="min-w-full bg-white" style="background: #fcfbf9; border-collapse: separate; border-spacing: 0;">
+                <thead class="bg-gray-100" style="background: linear-gradient(135deg, #f5f4f1 0%, #ede9e3 100%);">
                     <tr>
-                        <th class="py-3 px-4 text-left font-semibold">Date</th>
-                        <th class="py-3 px-4 text-left font-semibold">Holiday Name</th>
-                        <th class="py-3 px-4 text-left font-semibold">Created by</th>
+                        <th class="py-3 px-4 text-left font-semibold" style="padding: 20px 24px; color: #3a3835; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e5e3dd;">
+                            <i class="fas fa-calendar-day" style="margin-right: 8px; color: #2a2925;"></i>Date
+                        </th>
+                        <th class="py-3 px-4 text-left font-semibold" style="padding: 20px 24px; color: #3a3835; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e5e3dd;">
+                            <i class="fas fa-tag" style="margin-right: 8px; color: #2a2925;"></i>Holiday Name
+                        </th>
+                        <th class="py-3 px-4 text-left font-semibold" style="padding: 20px 24px; color: #3a3835; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e5e3dd;">
+                            <i class="fas fa-user" style="margin-right: 8px; color: #2a2925;"></i>Created by
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for holiday in upcoming_holidays %}
-                        <tr class="border-t hover:bg-gray-50">
-                            <td class="py-3 px-4">{{ holiday.date|date:"l, F j, Y" }}</td>
-                            <td class="py-3 px-4">{{ holiday.name }}</td>
-                            <td class="py-3 px-4">{{ holiday.created_by.get_full_name }}</td>
+                        <tr class="border-t hover:bg-gray-50" style="border-top: 1px solid #ede9e3; transition: all 0.2s ease; cursor: pointer;" onmouseover="this.style.background='linear-gradient(135deg, #f5f4f1 0%, #f0efec 100%)'; this.style.transform='translateX(4px)'" onmouseout="this.style.background='#fcfbf9'; this.style.transform='translateX(0)'">
+                            <td class="py-3 px-4" style="padding: 20px 24px; color: #3a3835; font-weight: 500; vertical-align: middle; position: relative;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="width: 12px; height: 12px; background: linear-gradient(135deg, #3a3835, #2a2925); border-radius: 50%; flex-shrink: 0;"></div>
+                                    <span style="font-size: 0.95rem;">{{ holiday.date|date:"l, F j, Y" }}</span>
+                                </div>
+                            </td>
+                            <td class="py-3 px-4" style="padding: 20px 24px; color: #2a2925; font-weight: 600; font-size: 1rem; vertical-align: middle;">
+                                {{ holiday.name }}
+                            </td>
+                            <td class="py-3 px-4" style="padding: 20px 24px; color: #5a5752; font-weight: 500; vertical-align: middle;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="width: 8px; height: 8px; background: #3a3835; border-radius: 50%;"></div>
+                                    {{ holiday.created_by.get_full_name }}
+                                </div>
+                            </td>
                         </tr>
                     {% empty %}
                         <tr>
-                            <td colspan="3" class="py-3 px-4 text-center text-gray-500">
-                                No upcoming holidays scheduled.
+                            <td colspan="3" class="py-3 px-4 text-center text-gray-500" style="padding: 40px 24px; text-align: center; color: #8a8782; font-style: italic;">
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
+                                    <i class="fas fa-calendar-times" style="font-size: 3rem; color: #bab6b0;"></i>
+                                    <span style="font-size: 1.1rem; font-weight: 500;">No upcoming holidays scheduled.</span>
+                                </div>
                             </td>
                         </tr>
                     {% endfor %}
@@ -67,4 +115,65 @@
         </div>
     </div>
 </div>
+
+<style>
+/* Enhanced Form Input Styling */
+input[type="text"], input[type="date"], select, textarea {
+    width: 100% !important;
+    padding: 16px 16px 16px 40px !important;
+    border: 2px solid #e5e3dd !important;
+    border-radius: 12px !important;
+    font-size: 1rem !important;
+    transition: all 0.3s ease !important;
+    background: rgba(252, 251, 249, 0.9) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03) !important;
+    color: #3a3835 !important;
+}
+
+input[type="text"]:focus, input[type="date"]:focus, select:focus, textarea:focus {
+    outline: none !important;
+    border-color: #3a3835 !important;
+    box-shadow: 0 0 0 4px rgba(58, 56, 53, 0.1), 0 4px 6px rgba(0, 0, 0, 0.08) !important;
+    background: #fcfbf9 !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Button Hover Effects */
+button[type="submit"]:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(42, 41, 37, 0.4) !important;
+}
+
+button[type="submit"]:active {
+    transform: translateY(0) !important;
+}
+
+/* Card Hover Effects */
+.bg-white:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Table Row Animation */
+tbody tr {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Loading Animation for Button */
+button[type="submit"]:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(248, 247, 244, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+button[type="submit"]:hover:after {
+    left: 100%;
+}
+</style>
+
 {% endblock %}
