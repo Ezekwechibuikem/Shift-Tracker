@@ -1,6 +1,11 @@
 {% extends "flow/base.html" %}
 
 {% block content %}
+<ol class="breadcrumb float-xl-end">
+    <li class="breadcrumb-item"><a href="{% url 'authentication:home' %}">Home</a></li>
+    <li class="breadcrumb-item active">Manage User</a></li>
+    {% comment %} <li class="breadcrumb-item active">General</li> {% endcomment %}
+</ol>
 <div class="container py-2">
     <!-- Header -->
     <div class="mb-4 text-center">
