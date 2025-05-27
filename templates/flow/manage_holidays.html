@@ -1,7 +1,12 @@
 {% extends 'flow/base.html' %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8" style="background: linear-gradient(135deg, #B2BEB5 0%, #ede9e3 100%); min-height: 100vh;">
+<ol class="breadcrumb float-xl-end">
+    <li class="breadcrumb-item"><a href="{% url 'authentication:home' %}">Home</a></li>
+    <li class="breadcrumb-item active">Add Holiday</a></li>
+    {% comment %} <li class="breadcrumb-item active">General</li> {% endcomment %}
+</ol>
+<div class="container mx-auto px-4 py-5">
     <div class="text-center mb-6 border p-4 rounded-lg shadow-sm" style="background: rgba(252, 251, 249, 0.95); backdrop-filter: blur(15px); border: 1px solid rgba(248, 247, 244, 0.8); border-radius: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);">
         <h1 class="text-2xl font-bold" style="color: #2a2925; font-weight: 700; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); display: flex; align-items: center; justify-content: center; gap: 12px;">
             <i class="fas fa-calendar-alt" style="color: #3a3835; font-size: 2rem;"></i>
@@ -18,9 +23,8 @@
             </div>
             Add New Holiday
         </h2>
-        <form method="post" style="position: relative;">
+        <form method="post" style="position: relative;" autocomplete="off">
             {% csrf_token %}
-            
             <div class="grid gap-6" style="gap: 2rem;">
                 <div style="position: relative;">
                     <label class="block text-gray-700 font-medium mb-2" style="color: #3a3835; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-size: 0.95rem;">

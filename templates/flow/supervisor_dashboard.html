@@ -1,7 +1,16 @@
 {% extends 'flow/base.html' %}
 
 {% block content %}
-<div class="container py-5">
+<ol class="breadcrumb float-xl-end">
+    <li class="breadcrumb-item"><a href="{% url 'authentication:home' %}">Home</a></li>
+    <li class="breadcrumb-item active">Supervisors Assignment</a></li>
+    {% comment %} <li class="breadcrumb-item active">General</li> {% endcomment %}
+</ol>
+<h1 class="page-header">
+    Supervisor Management 
+    <small>assign, edit, and oversee supervisor roles and responsibilities</small>
+  </h1>
+<div class="container py-2">
     <div class="card shadow-lg border-0 rounded-4">
         <div class="card-header bg-dark text-white py-4 rounded-top d-flex justify-content-between align-items-center">
             <h3 class="mb-0">Supervisors List</h3>
