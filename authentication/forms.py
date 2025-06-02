@@ -14,8 +14,8 @@ class CustomUserCreationForm(UserCreationForm):
     last_name = forms.CharField(required=True, max_length=30, widget=forms.TextInput(attrs={
             'class': 'form-control','placeholder': 'Enter your last name'})
     )
-    department = forms.CharField(required=True, max_length=50, widget=forms.TextInput(attrs={
-            'class': 'form-control', 'placeholder': 'Enter your department'})
+    department = forms.ChoiceField(choices=CustomUser.DEPARTMENT_CHOICES, required=True, widget=forms.TextInput(attrs={
+            'class': 'form-control', 'placeholder': 'Select department'})
     )
     unit = forms.CharField(required=True, max_length=50, widget=forms.TextInput(attrs={
             'class': 'form-control', 'placeholder': 'Enter your unit'})
@@ -61,7 +61,7 @@ class UserEditForm(forms.ModelForm):
     last_name = forms.CharField(required=True, widget=forms.TextInput(attrs={
         'class': 'form-control'
     }))
-    department = forms.CharField(required=True, widget=forms.TextInput(attrs={
+    department = forms.ChoiceField(choices=CustomUser.DEPARTMENT_CHOICES, widget=forms.TextInput(attrs={
         'class': 'form-control'
     }))
     unit = forms.CharField(required=True, widget=forms.TextInput(attrs={

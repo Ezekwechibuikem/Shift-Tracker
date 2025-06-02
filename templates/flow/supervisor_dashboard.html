@@ -36,14 +36,16 @@
                             <td>{{ forloop.counter }}</td>
                             <td>{{ supervisor.first_name }} {{ supervisor.last_name }}</td>
                             <td>{{ supervisor.email }}</td>
-                            <td>{{ supervisor.department }}</td>
+                            <td>{{ supervisor.get_department_display  }}</td>
                             <td>{{ supervisor.unit }}</td>
-                            <td>{{ supervisor.team }}</td>
+                            <td>{{ supervisor.get_team_display }}</td>
                             <td class="text-center">
-                                <a href="{% url 'flow:assign_staff' supervisor.id %}" 
-                                   class="btn btn-sm btn-outline-primary px-3">
-                                   Assign Staff
-                                </a>
+                                {% if user.is_admin %}
+                                    <a href="{% url 'flow:assign_staff' supervisor.id %}" 
+                                    class="btn btn-sm btn-outline-primary px-3">
+                                    Assign Staff
+                                    </a>
+                                {% endif %}
                             </td>
                         </tr>
                         {% empty %}

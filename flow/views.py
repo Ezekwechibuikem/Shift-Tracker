@@ -17,9 +17,9 @@ from django.views.decorators.http import require_POST
 
 @login_required
 def supervisor_dashboard(request):
-    if not request.user.is_admin():
-        messages.error(request, "Access denied. Admin privileges required.")
-        return redirect('authentication:home')
+    # if not request.user.is_admin():
+    #     messages.error(request, "Access denied. Admin privileges required.")
+    #     return redirect('authentication:home')
     
     supervisors = CustomUser.objects.filter(
         role='SUPERVISOR'
