@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container py-3">
     <!-- Header and Breadcrumb Row -->
-    <div class="row align-items-center mb-5">
+    <div class="row align-items-center mb-4">
         <!-- Left Side: Page Title and Subtitle -->
         <div class="col-md-8">
             <h2 class="fw-bold text-uppercase text-dark mb-1">
@@ -26,14 +26,22 @@
     </div>
 
     <!-- Assigned Staff Table -->
-    <div class="card mb-5 shadow-sm border-0">
-        <div class="card-header bg-light border-bottom">
-            <h5 class="mb-0 fw-semibold text-primary">Currently Assigned Staff</h5>
-        </div>
+    <div class="card shadow-sm rounded-4 border-0">
+        <div class="panel panel-inverse">
+            <!-- BEGIN panel-heading -->
+            <div class="panel-heading">
+                <h4 class="panel-title">Currently Assigned Staff</h4>
+                <div class="panel-heading-btn">
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-default" data-toggle="panel-expand"><i class="fa fa-expand"></i></a>
+                    {% comment %} <a href="javascript:;" class="btn btn-xs btn-icon btn-success" data-toggle="panel-reload"><i class="fa fa-redo"></i></a>
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-warning" data-toggle="panel-collapse"><i class="fa fa-minus"></i></a> {% endcomment %}
+                    {% comment %} <a href="javascript:;" class="btn btn-xs btn-icon btn-danger" data-toggle="panel-remove"><i class="fa fa-times"></i></a> {% endcomment %}
+                </div>
+            </div>
         <div class="card-body p-4">
             <div class="table-responsive">
                 <table class="table table-striped table-hover align-middle">
-                    <thead class="table-light">
+                    <thead>
                         <tr>
                             <th>S/N</th>
                             <th>Name</th>
@@ -46,13 +54,13 @@
                     </thead>
                     <tbody>
                         {% for staff in assigned_staff %}
-                        <tr>
+                        <tr class="odd gradeX">
                             <td>{{ forloop.counter }}</td>
                             <td>{{ staff.first_name }} {{ staff.last_name }}</td>
                             <td>{{ staff.email }}</td>
-                            <td>{{ staff.department }}</td>
+                            <td>{{ staff.get_department_display }}</td>
                             <td>{{ staff.unit }}</td>
-                            <td>{{ staff.team }}</td>
+                            <td>{{ staff.get_team_display}}</td>
                             <td class="text-center">
                                 <a href="{% url 'flow:remove_staff_assignment' supervisor.id staff.id %}"
                                    class="btn btn-sm btn-outline-danger"
@@ -75,41 +83,97 @@
     </div>
 
     <!-- Assign Staff Form -->
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-light border-bottom">
-            <h5 class="mb-0 fw-semibold text-success">Assign New Staff</h5>
-        </div>
+    <div class="card shadow-sm rounded-4 border-0 mt-3">
+        <div class="panel panel-inverse">
+            <!-- BEGIN panel-heading -->
+            <div class="panel-heading">
+                <h4 class="panel-title">Assign New Staff</h4>
+                <div class="panel-heading-btn">
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-default" data-toggle="panel-expand"><i class="fa fa-expand"></i></a>
+                    {% comment %} <a href="javascript:;" class="btn btn-xs btn-icon btn-success" data-toggle="panel-reload"><i class="fa fa-redo"></i></a>
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-warning" data-toggle="panel-collapse"><i class="fa fa-minus"></i></a> {% endcomment %}
+                    {% comment %} <a href="javascript:;" class="btn btn-xs btn-icon btn-danger" data-toggle="panel-remove"><i class="fa fa-times"></i></a> {% endcomment %}
+                </div>
+            </div>
         <div class="card-body p-4">
             <form method="post">
                 {% csrf_token %}
-
                 {% if form.non_field_errors %}
                 <div class="alert alert-danger">
                     {{ form.non_field_errors }}
                 </div>
                 {% endif %}
-
+                
+                <!-- Staff Selection Table -->
                 <div class="mb-4">
-                    <label class="form-label fw-semibold">Select Staff to Assign</label>
-                    <div class="border rounded p-3 bg-white" style="max-height: 300px; overflow-y: auto;">
-                        {% for choice in form.staff %}
-                        <div class="form-check mb-2">
-                            {{ choice.tag }} 
-                            <label class="form-check-label ms-2">{{ choice.choice_label }}</label>
-                        </div>
-                        {% endfor %}
+                    <label class="form-label fw-semibold mb-3">Select Staff to Assign:</label>
+                    
+                    <!-- Staff Table -->
+                    <div class="table-responsive border rounded" style="max-height: 400px; overflow-y: auto;">
+                        <table class="table table-hover table-sm mb-0">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col" style="width: 60px; position: sticky; top: 0; z-index: 10;">Select</th>
+                                    <th scope="col" style="position: sticky; top: 0; z-index: 10;">Staff Member</th>
+                                    <th scope="col" style="position: sticky; top: 0; z-index: 10;">Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for choice in form.staff %}
+                                <tr style="cursor: pointer; transition: background-color 0.2s ease;">
+                                    <td class="text-center" style="vertical-align: middle;">
+                                        <div class="form-check" style="display: flex; justify-content: center; align-items: center; min-height: 1.5rem;">
+                                            <input class="form-check-input" type="checkbox" name="{{ form.staff.name }}" value="{{ choice.data.value }}" id="{{ choice.data.attrs.id }}" style="width: 1.2em; height: 1.2em;">
+                                        </div>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <div class="d-flex align-items-center">
+                                            <div>
+                                                <div class="fw-medium text-dark">
+                                                    {{ choice.choice_label }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <div class="small text-muted">
+                                            Available for assignment
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted py-4">
+                                        <em>No staff available for assignment</em>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
+                    
                     {% if form.staff.errors %}
-                    <small class="text-danger">{{ form.staff.errors }}</small>
+                    <div class="alert alert-danger mt-3">
+                        <small>{{ form.staff.errors }}</small>
+                    </div>
                     {% endif %}
                 </div>
-
-                <div class="d-flex justify-content-between">
-                    <a href="{% url 'flow:supervisor_dashboard' %}" class="btn btn-secondary px-4">
-                        Back
+                
+                <!-- Selection Instructions -->
+                <div class="alert alert-info">
+                    <small>
+                        <i class="fas fa-info-circle me-1"></i>
+                        Select one or more staff members from the table above to assign them.
+                    </small>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-between align-items-center" style="flex-wrap: wrap; gap: 10px;">
+                    <a href="{% url 'flow:supervisor_dashboard' %}" class="btn btn-outline-secondary px-4" style="min-width: 120px;">
+                        <i class="fas fa-arrow-left me-2"></i>Back
                     </a>
-                    <button type="submit" class="btn btn-primary px-4">
-                        Assign
+                    <button type="submit" class="btn btn-black px-4" style="min-width: 160px;">
+                        <i class="fas fa-user-plus me-2"></i>Assign Selected Staff
                     </button>
                 </div>
             </form>

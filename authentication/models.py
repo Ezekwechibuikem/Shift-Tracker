@@ -91,8 +91,7 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
     
     def __str__(self):
-        return f"{self.first_name} {self.last_name}, email - {self.email}, department - {self.department}, unit - {self.unit}, Team - {self.team}"
-    
+        return f"{self.first_name} {self.last_name}, email -- {self.email}, department -- {self.get_department_display()}, Team -- {self.get_team_display()}"
     
     def is_admin(self):
         return self.role == 'ADMIN' or self.is_superuser

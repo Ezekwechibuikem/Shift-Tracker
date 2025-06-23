@@ -42,7 +42,7 @@
                             <td width="1%" class="fw-bold">{{ forloop.counter }}</td>
                             <td>{{ staff.first_name }} {{ staff.last_name }}</td>
                             <td>{{ staff.email }}</td>
-                            <td>{{ staff.department }}</td>
+                            <td>{{ staff.get_department_display  }}</td>
                             <td>{{ staff.unit }}</td>
                             <td>{{ staff.get_role_display }}</td>
                             <td>{{ staff.get_team_display|default:"-" }}</td>
