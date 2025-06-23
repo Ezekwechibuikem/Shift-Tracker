@@ -91,7 +91,7 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
     
     def __str__(self):
-        return f"{self.first_name} {self.last_name}, email - {self.email}, department - {self.department}, unit - {self.unit}"
+        return f"{self.first_name} {self.last_name}, email - {self.email}, department - {self.department}, unit - {self.unit}, Team - {self.team}"
     
     
     def is_admin(self):

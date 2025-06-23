@@ -3,37 +3,46 @@
 {% block content %}
 <ol class="breadcrumb float-xl-end">
     <li class="breadcrumb-item"><a href="{% url 'authentication:home' %}">Home</a></li>
-    <li class="breadcrumb-item active">Supervisors Assignment</a></li>
+    <li class="breadcrumb-item active">Assignment</a></li>
     {% comment %} <li class="breadcrumb-item active">General</li> {% endcomment %}
 </ol>
-<h1 class="page-header">
-    Supervisor Management 
-    <small>assign, edit, and oversee supervisor roles and responsibilities</small>
-  </h1>
 <div class="container py-2">
-    <div class="card shadow-lg border-0 rounded-4">
-        <div class="card-header bg-dark text-white py-4 rounded-top d-flex justify-content-between align-items-center">
-            <h3 class="mb-0">Supervisors List</h3>
-        </div>
-
-        <div class="card-body p-4">
-            <div class="table-responsive">
-                <table class="table table-hover table-bordered align-middle mb-0">
-                    <thead class="table-light">
+    <!-- Header -->
+    <div class="mb-4 text-center">
+        <h2 class="fw-bold text-uppercase text-dark">Assign Staffs</h2>
+        <p class="text-muted">assign, edit, and oversee supervisor roles and responsibilities.</p>
+    </div>
+<div class="container">
+    <div class="card shadow-sm rounded-4 border-0">
+        <div class="panel panel-inverse">
+            <!-- BEGIN panel-heading -->
+            <div class="panel-heading">
+                <h4 class="panel-title">USER LIST</h4>
+                <div class="panel-heading-btn">
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-default" data-toggle="panel-expand"><i class="fa fa-expand"></i></a>
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-success" data-toggle="panel-reload"><i class="fa fa-redo"></i></a>
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-warning" data-toggle="panel-collapse"><i class="fa fa-minus"></i></a>
+                </div>
+            </div>
+            <!-- END panel-heading -->
+            <!-- BEGIN panel-body -->
+            <div class="panel-body">
+                <table id="data-table-default" class="table table-striped table-bordered align-middle">
+                    <thead >
                         <tr>
-                            <th scope="col">S/N</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Department</th>
-                            <th scope="col">Unit</th>
-                            <th scope="col">Team</th>
-                            <th scope="col" class="text-center">Action</th>
+                            <th width="1%"></th>
+                            <th class="text-nowrap">Name</th>
+                            <th class="text-nowrap">Email</th>
+                            <th class="text-nowrap">Department</th>
+                            <th class="text-nowrap">Unit</th>
+                            <th class="text-nowrap">Team</th>
+                            <th class="text-nowrap">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for supervisor in supervisors %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
+                        <tr class="odd gradeX">
+                            <td width="1%" class="fw-bold">{{ forloop.counter }}</td> 
                             <td>{{ supervisor.first_name }} {{ supervisor.last_name }}</td>
                             <td>{{ supervisor.email }}</td>
                             <td>{{ supervisor.get_department_display  }}</td>
