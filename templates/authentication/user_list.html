@@ -29,7 +29,7 @@
                 <!-- END panel-heading -->
                     <!-- BEGIN panel-body -->
                 <div class="panel-body">
-                    <table id="data-table-default" class="table table-striped table-bordered align-middle">
+                    <table id="data-table-combine" class="table table-striped table-bordered align-middle">
                         <thead >
                             <tr>
                                 <th width="1%"></th>
@@ -48,7 +48,7 @@
                             <td width="1%" class="fw-bold">{{ forloop.counter }}</td> 
                             <td>{{ user.first_name }} {{ user.last_name }}</td>
                             <td>{{ user.email }}</td>
-                            <td>{{ user.department }}</td>
+                            <td>{{ user.get_department_display }}</td>
                             <td>{{ user.unit }}</td>
                             <td>{{ user.get_role_display }}</td>
                             <td>{{ user.get_team_display|default:"-" }}</td>
