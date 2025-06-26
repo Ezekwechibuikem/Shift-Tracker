@@ -24,7 +24,7 @@ def register_view(request):
             if user.role == 'ADMIN':
                 user.is_staff = True
                 user.save()
-            auth_login(request, user)
+            # auth_login(request, user)
             messages.success(request, "Registration successful.")
             return redirect('authentication:home') 
         messages.error(request, "Unsuccessful registration. Invalid information.")

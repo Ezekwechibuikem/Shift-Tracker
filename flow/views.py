@@ -3,10 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
 from django.core.paginator import Paginator
-from django.urls import reverse
+# from django.urls import reverse
 from django.utils import timezone
-from django.db import transaction
-from datetime import datetime, timedelta
+# from django.db import transaction
+from datetime import timedelta
 from authentication.models import CustomUser
 from .models import SupervisorAssignment, WeeklySchedule, StaffShift, Holiday, Attendance
 from .forms import SupervisorAssignmentForm, WeeklyScheduleGenerationForm, HolidayForm, ManualScheduleEditForm
@@ -17,9 +17,9 @@ from django.views.decorators.http import require_POST
 
 @login_required
 def supervisor_dashboard(request):
-    if not request.user.is_admin():
-        messages.error(request, "Access denied. Admin privileges required.")
-        return redirect('authentication:home')
+    # if not request.user.is_admin():
+    #     messages.error(request, "Access denied. Admin privileges required.")
+    #     return redirect('authentication:home')
     
     supervisors = CustomUser.objects.filter(
         role='SUPERVISOR'
@@ -60,27 +60,35 @@ def assign_staff(request, supervisor_id):
     supervisor = get_object_or_404(CustomUser, id=supervisor_id, role='SUPERVISOR')
     
     assigned_staff = CustomUser.objects.filter(
-        assigned_supervisor__supervisor=supervisor
+        assigned_supervisor__supervisor=supervisor,
+        department=supervisor.department
     ).select_related(
         'assigned_supervisor__supervisor'  
     ).order_by('first_name', 'last_name')
     
     unassigned_staff = CustomUser.objects.filter(
-        role='STAFF'
+        role='STAFF',
+        department=supervisor.department
     ).exclude(
         assigned_supervisor__supervisor=supervisor
     ).order_by('first_name', 'last_name')
 
     if request.method == 'POST':
-        form = SupervisorAssignmentForm(request.POST)
-        form.fields['staff'].queryset = unassigned_staff
+        form = SupervisorAssignmentForm(request.POST, supervisor=supervisor)
         if form.is_valid():
             try:
-                form.save(supervisor=supervisor)
-                messages.success(request, f"Staff assigned successfully to {supervisor.first_name}!")
+                assignments = form.save(supervisor=supervisor)
+                assigned_count = len(assignments)
+                messages.success(
+                    request, 
+                    f"{assigned_count} staff member{'s' if assigned_count != 1 else ''} assigned successfully to {supervisor.first_name}!"
+                )
                 return redirect('flow:assign_staff', supervisor_id=supervisor_id)
             except Exception as e:
                 messages.error(request, f"Error assigning staff: {str(e)}")
+                
+        else:
+            messages.error(request, "Please correct the errors below.")
     else:
         form = SupervisorAssignmentForm()
         form.fields['staff'].queryset = unassigned_staff
@@ -90,6 +98,7 @@ def assign_staff(request, supervisor_id):
         'supervisor': supervisor,
         'assigned_staff': assigned_staff,
         'unassigned_staff': unassigned_staff,
+        'supervisor_department': supervisor.department,
     }
     return render(request, 'flow/assign_staff.html', context)
 
