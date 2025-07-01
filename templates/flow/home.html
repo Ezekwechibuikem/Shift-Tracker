@@ -12,7 +12,7 @@
 <div class="alert d-flex align-items-center justify-content-between mb-4 shadow-sm" style="background-color: #f8f9fa;">
     <div>
         <h5 class="mb-1">Hello, {{ request.user.get_full_name }}!</h5>
-        <p class="mb-0">Role: <strong>{{ request.user.get_role_display }}</strong> | Department: <strong>{{ request.user.department }}</strong></p>
+        <p class="mb-0">Role: <strong>{{ request.user.get_role_display }}</strong> | Department: <strong>{{ request.user.get_department_display }}</strong></p>
     </div>
     <div>
         <small>{% now "l, d M, Y." %}</small>
