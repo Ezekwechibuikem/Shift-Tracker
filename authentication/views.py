@@ -67,6 +67,9 @@ def home(request):
         'staff_details': staff_details,
         'total_staff_count': CustomUser.objects.filter(role='STAFF').count(),
         'supervisor_count': CustomUser.objects.filter(role='SUPERVISOR').count(),
+        'supervisor_team_count': CustomUser.objects.filter(
+            assigned_supervisor__isnull=False,
+        ).count(),
         'active_schedule_count': WeeklySchedule.objects.filter(
             start_date__lte=timezone.now().date(),
             end_date__gte=timezone.now().date()

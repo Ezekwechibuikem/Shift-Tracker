@@ -90,6 +90,7 @@
                     <th>Staff Name</th>
                     <th>Supervisor</th>
                     <th>Team</th>
+                    <th> Team count</th>
                 </tr>
             </thead>
             <tbody>
@@ -102,6 +103,7 @@
                         <td>No supervisor assigned</td>
                     {% endif %}
                     <td>{{ staff_details.get_team_display }}</td>
+                    <td>{{ supervisor_team_count  }}</td>
                 </tr>
                 {% comment %} <tr>
                     <td colspan="5" class="text-center text-muted py-3">No recent assignments found.</td>

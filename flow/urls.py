@@ -9,6 +9,7 @@ urlpatterns = [
     path('supervisor/<int:supervisor_id>/remove/<int:staff_id>/', 
          views.remove_staff_assignment, name='remove_staff_assignment'),
     path('team-staff/', views.team_staff_list, name='team_staff_list'),
+    path('my-team/', views.supervisor_team, name='supervisor_team'),
     
     path('schedule/generate/', views.generate_schedule, name='generate_schedule'),
     path('schedule/view/<int:schedule_id>/', views.view_schedule, name='view_schedule'),

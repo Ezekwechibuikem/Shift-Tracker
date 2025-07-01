@@ -62,6 +62,16 @@
                     </a>
                 </div>
             {% endif %}
+            {% if user.is_supervisor %}
+            <div class="menu-item pt-5px">
+                <a href="{% url 'flow:supervisor_team' %}" class="menu-link">
+                    <div class="menu-icon">
+                        <i class="fa fa-user-tie"></i>
+                    </div>
+                    <div class="menu-text">My Team</div>
+                </a>
+            </div>
+            {% endif %}
             <div class="menu-divider m-0"></div>
         </div>
         <div class="menu-header">Overview</div>

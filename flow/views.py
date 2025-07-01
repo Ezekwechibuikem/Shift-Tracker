@@ -45,6 +45,32 @@ def supervisor_dashboard(request):
     }
     return render(request, 'flow/supervisor_dashboard.html', context)
 
+@login_required
+def supervisor_team(request):
+    """View for supervisors to see their team"""
+    # Check if user is a supervisor
+    if not hasattr(request.user, 'is_supervisor') or not request.user.is_supervisor:
+        messages.error(request, "Access denied. Supervisor privileges required.")
+        return redirect('authentication:home')
+    
+    # Get the current supervisor 
+    supervisor = request.user
+    
+    # Get all staff members assigned to this supervisor
+    supervisor_team = CustomUser.objects.filter(
+        assigned_supervisor__supervisor=supervisor,
+        ).select_related(
+        'assigned_supervisor__supervisor',
+        # 'department',
+        ).order_by('first_name', 'last_name')
+        
+    context = {
+        'supervisor': supervisor,
+        'supervisor_team': supervisor_team,
+        # 'total_staff_count': total_staff_count,
+        }
+    return render(request, 'flow/supervisor_team.html', context)
+
 @require_POST
 def clear_message(request):
     if 'gritter_message' in request.session:
