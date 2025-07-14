@@ -7,22 +7,38 @@ from authentication.models import CustomUser
 
 class SupervisorAssignmentForm(forms.Form):
     staff = forms.ModelMultipleChoiceField(
-        queryset=CustomUser.objects.filter(role='STAFF'),
+        queryset=CustomUser.objects.none(),  
         widget=forms.CheckboxSelectMultiple,
         required=True,
-        label='Select Staff Members'
+        label='Select Staff Members',
+        error_messages={
+            'required': 'Please select at least one staff member to assign.'
+        }
     )
+
+    def __init__(self, *args, **kwargs):
+        supervisor = kwargs.pop('supervisor', None)
+        super().__init__(*args, **kwargs)
+        
+        if supervisor:
+            self.fields['staff'].queryset = CustomUser.objects.filter(
+                role='STAFF',
+                department=supervisor.department
+            ).exclude(
+                assigned_supervisor__supervisor=supervisor
+            ).order_by('first_name', 'last_name')
 
     def save(self, supervisor):
         staff_members = self.cleaned_data['staff']
         assignments = []
         
         for staff_member in staff_members:
-            assignment, created = SupervisorAssignment.objects.update_or_create(
+            assignment, created = SupervisorAssignment.objects.get_or_create(
                 staff=staff_member,
-                defaults={'supervisor': supervisor}
+                supervisor=supervisor
             )
-            assignments.append(assignment)
+            if created:
+                assignments.append(assignment)
         
         return assignments
     
