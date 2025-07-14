@@ -18,5 +18,9 @@ urlpatterns = [
     path('attendance/', views.check_attendance, name='check_attendance'),
     
     path('clear-message/', views.clear_message, name='clear_message'),
+
+    path('faq/', views.faq_list, name='faq_list'),
+    path('faq/<int:faq_id>/', views.faq_detail, name='faq_detail'),
+    path('faq/search/', views.faq_search_ajax, name='faq_search_ajax'),
     
 ]

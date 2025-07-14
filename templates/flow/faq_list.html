@@ -1,0 +1,199 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shift Tracker FAQ</title>
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+</head>
+<body>
+    <div class="faq-container">
+        <div class="faq-header">
+            <h1>Shift Tracker FAQ</h1>
+            <p>Frequently Asked Questions</p>
+        </div>
+
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search FAQs..." id="searchInput">
+        </div>
+
+        <div id="faqList">
+            <div class="faq-item" data-category="getting-started">
+                <button class="faq-question">
+                    <span class="question-text">Getting Started: How do I log into Shift Tracker?</span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <div class="answer-content">
+                        <div class="meta-info">👁 0 views • 📅 Updated Jun 04, 2025</div>
+                        <p>To log into Shift Tracker, navigate to the login page and enter your username and password. If you forgot your password, click on "Forgot Password" to reset it. If you don't have an account yet, contact your administrator to create one for you.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="getting-started">
+                <button class="faq-question">
+                    <span class="question-text">Getting Started: What is Shift Tracker and how does it work?</span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <div class="answer-content">
+                        <div class="meta-info">👁 0 views • 📅 Updated Jun 04, 2025</div>
+                        <p>Shift Tracker is a workforce management tool that helps businesses track employee shifts, monitor work hours, and manage schedules. It allows supervisors to create schedules, employees to view their shifts, track attendance, and generate reports for better workforce management.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="getting-started">
+                <button class="faq-question">
+                    <span class="question-text">Getting Started: How do I navigate the dashboard?</span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <div class="answer-content">
+                        <div class="meta-info">👁 0 views • 📅 Updated Jun 04, 2025</div>
+                        <p>The dashboard is your main control center. Use the sidebar menu to navigate between different sections like Home, Schedules, Staff Management, and Reports. The top navigation bar shows your profile and notification options. Each section has its own set of tools and features.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="scheduling">
+                <button class="faq-question">
+                    <span class="question-text">Scheduling: How do I create a new schedule?</span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <div class="answer-content">
+                        <div class="meta-info">👁 0 views • 📅 Updated Jun 04, 2025</div>
+                        <p>To create a new schedule, go to the Scheduling section and click "Create Schedule". Fill in the required information including shift times, assigned staff, and dates. You can create recurring schedules or one-time shifts. Don't forget to save your changes.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="scheduling">
+                <button class="faq-question">
+                    <span class="question-text">Scheduling: Can I assign multiple staff members to one shift?</span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <div class="answer-content">
+                        <div class="meta-info">👁 0 views • 📅 Updated Jun 04, 2025</div>
+                        <p>Yes, you can assign multiple staff members to a single shift. When creating or editing a schedule, use the staff assignment feature to select multiple employees. This is useful for shifts that require multiple people working together.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="scheduling">
+                <button class="faq-question">
+                    <span class="question-text">Scheduling: How do I handle schedule conflicts?</span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <div class="answer-content">
+                        <div class="meta-info">👁 0 views • 📅 Updated Jun 04, 2025</div>
+                        <p>The system will automatically detect scheduling conflicts when an employee is assigned to overlapping shifts. When conflicts are detected, you'll see a warning message. You can resolve conflicts by adjusting shift times, reassigning staff, or splitting shifts.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            class FAQAccordion {
+                constructor() {
+                    this.init();
+                }
+
+                init() {
+                    this.bindEvents();
+                }
+
+                bindEvents() {
+                    // Handle FAQ question clicks
+                    document.addEventListener('click', (e) => {
+                        if (e.target.closest('.faq-question')) {
+                            this.toggleFAQ(e.target.closest('.faq-question'));
+                        }
+                    });
+
+                    // Handle search
+                    const searchInput = document.getElementById('searchInput');
+                    searchInput.addEventListener('input', (e) => {
+                        this.filterFAQs(e.target.value);
+                    });
+                }
+
+                toggleFAQ(questionButton) {
+                    const faqItem = questionButton.closest('.faq-item');
+                    const answer = faqItem.querySelector('.faq-answer');
+                    const icon = questionButton.querySelector('.toggle-icon');
+                    
+                    const isOpen = answer.classList.contains('open');
+                    
+                    if (isOpen) {
+                        // Close this FAQ
+                        answer.classList.remove('open');
+                        questionButton.classList.remove('active');
+                        icon.classList.remove('rotated');
+                    } else {
+                        // Close all other FAQs first (optional - remove if you want multiple open)
+                        this.closeAllFAQs();
+                        
+                        // Open this FAQ
+                        answer.classList.add('open');
+                        questionButton.classList.add('active');
+                        icon.classList.add('rotated');
+                    }
+                }
+
+                closeAllFAQs() {
+                    const allAnswers = document.querySelectorAll('.faq-answer');
+                    const allQuestions = document.querySelectorAll('.faq-question');
+                    const allIcons = document.querySelectorAll('.toggle-icon');
+                    
+                    allAnswers.forEach(answer => answer.classList.remove('open'));
+                    allQuestions.forEach(question => question.classList.remove('active'));
+                    allIcons.forEach(icon => icon.classList.remove('rotated'));
+                }
+
+                filterFAQs(searchTerm) {
+                    const faqItems = document.querySelectorAll('.faq-item');
+                    const faqList = document.getElementById('faqList');
+                    let visibleCount = 0;
+                    
+                    faqItems.forEach(item => {
+                        const questionText = item.querySelector('.question-text').textContent.toLowerCase();
+                        const answerText = item.querySelector('.answer-content').textContent.toLowerCase();
+                        const searchLower = searchTerm.toLowerCase();
+                        
+                        if (questionText.includes(searchLower) || answerText.includes(searchLower)) {
+                            item.style.display = 'block';
+                            visibleCount++;
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                    
+                    // Show "No results" message if no FAQs match
+                    let noResultsMsg = document.querySelector('.no-results');
+                    if (visibleCount === 0 && searchTerm.trim() !== '') {
+                        if (!noResultsMsg) {
+                            noResultsMsg = document.createElement('div');
+                            noResultsMsg.className = 'no-results';
+                            noResultsMsg.innerHTML = '<p>No FAQs found matching your search.</p>';
+                            faqList.appendChild(noResultsMsg);
+                        }
+                        noResultsMsg.style.display = 'block';
+                    } else if (noResultsMsg) {
+                        noResultsMsg.style.display = 'none';
+                    }
+                }
+            }
+
+            new FAQAccordion();
+        });
+    </script>
+</body>
+</html>

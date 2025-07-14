@@ -13,7 +13,7 @@ from .forms import SupervisorAssignmentForm, WeeklyScheduleGenerationForm, Holid
 from .utils import ScheduleGenerator
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-
+from .models import FAQ, FAQCategory
 
 @login_required
 def supervisor_dashboard(request):
@@ -348,3 +348,82 @@ def check_attendance(request):
         messages.info(request, "You have already completed your shift for today.")
     
     return redirect('flow:view_schedule')
+
+@login_required
+def faq_list(request):
+    """Display all FAQ categories and questions"""
+    search_query = request.GET.get('search', '')
+    category_id = request.GET.get('category', '')
+    
+    # Get all active categories
+    categories = FAQCategory.objects.filter(is_active=True).prefetch_related('faqs')
+    
+    # Get FAQs based on search and category filter
+    faqs = FAQ.objects.filter(is_active=True).select_related('category')
+    
+    if search_query:
+        faqs = faqs.filter(
+            Q(question__icontains=search_query) | 
+            Q(answer__icontains=search_query)
+        )
+    
+    if category_id:
+        faqs = faqs.filter(category_id=category_id)
+        selected_category = get_object_or_404(FAQCategory, id=category_id, is_active=True)
+    else:
+        selected_category = None
+    
+    context = {
+        'categories': categories,
+        'faqs': faqs,
+        'search_query': search_query,
+        'selected_category': selected_category,
+        'total_faqs': faqs.count(),
+    }
+    
+    return render(request, 'flow/faq_list.html', context)
+
+@login_required
+def faq_detail(request, faq_id):
+    """Display single FAQ detail"""
+    faq = get_object_or_404(FAQ, id=faq_id, is_active=True)
+    
+    # Increment view count
+    faq.increment_views()
+    
+    # Get related FAQs from same category
+    related_faqs = FAQ.objects.filter(
+        category=faq.category,
+        is_active=True
+    ).exclude(id=faq.id)[:5]
+    
+    context = {
+        'faq': faq,
+        'related_faqs': related_faqs,
+    }
+    
+    return render(request, 'flow/faq_detail.html', context)
+
+@login_required
+def faq_search_ajax(request):
+    """AJAX search for FAQs"""
+    query = request.GET.get('q', '')
+    
+    if len(query) < 2:
+        return JsonResponse({'results': []})
+    
+    faqs = FAQ.objects.filter(
+        Q(question__icontains=query) | Q(answer__icontains=query),
+        is_active=True
+    ).select_related('category')[:10]
+    
+    results = []
+    for faq in faqs:
+        results.append({
+            'id': faq.id,
+            'question': faq.question,
+            'category': faq.category.name,
+            'url': f'/faq/{faq.id}/'
+        })
+    
+    return JsonResponse({'results': results})

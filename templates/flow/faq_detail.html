@@ -1,0 +1,220 @@
+{% extends 'flow/base.html' %}
+{% load static %}
+
+{% block title %}{{ faq.question }} - FAQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .faq-detail-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+    }
+    
+    .breadcrumb {
+        background-color: rgba(255,255,255,0.1);
+        border-radius: 0.5rem;
+    }
+    
+    .breadcrumb-item a {
+        color: rgba(255,255,255,0.8);
+    }
+    
+    .breadcrumb-item.active {
+        color: white;
+    }
+    
+    .faq-content {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .faq-meta {
+        background-color: #f8f9fa;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .related-faqs {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 1.5rem;
+    }
+    
+    .related-faq-item {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .related-faq-item:last-child {
+        border-bottom: none;
+    }
+    
+    .related-faq-item a {
+        color: #495057;
+        text-decoration: none;
+        display: block;
+        transition: color 0.2s;
+    }
+    
+    .related-faq-item a:hover {
+        color: #007bff;
+        text-decoration: none;
+    }
+    
+    .category-badge {
+        background-color: #007bff;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        text-decoration: none;
+    }
+    
+    .back-button {
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="faq-detail-header">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'flow:home' %}">
+                        <i class="fa fa-home"></i> Home
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'flow:faq_list' %}">FAQ</a>
+                </li>
+                <li class="breadcrumb-item active">{{ faq.category.name }}</li>
+            </ol>
+        </nav>
+        <h1><i class="fa fa-question-circle"></i> FAQ Detail</h1>
+    </div>
+</div>
+
+<div class="container">
+    <div class="back-button">
+        <a href="{% url 'flow:faq_list' %}" class="btn btn-outline-primary">
+            <i class="fa fa-arrow-left"></i> Back to FAQ List
+        </a>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- FAQ Content -->
+            <div class="faq-content">
+                <div class="faq-meta">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Category:</strong>
+                            <a href="{% url 'flow:faq_list' %}?category={{ faq.category.id }}" 
+                               class="category-badge ml-2">
+                                {{ faq.category.name }}
+                            </a>
+                        </div>
+                        <div class="col-md-6 text-md-right">
+                            <small class="text-muted">
+                                <i class="fa fa-eye"></i> {{ faq.views }} views
+                                <span class="ml-3">
+                                    <i class="fa fa-clock"></i> Updated {{ faq.updated_at|date:"M d, Y" }}
+                                </span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2 class="mb-4">{{ faq.question }}</h2>
+                
+                <div class="faq-answer">
+                    {{ faq.answer|linebreaks }}
+                </div>
+            </div>
+            
+            <!-- Helpful Actions -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Was this helpful?</h5>
+                    <p class="card-text">If you need more assistance, please contact our support team.</p>
+                    <a href="{% url 'flow:admin_contact' %}" class="btn btn-primary">
+                        <i class="fa fa-envelope"></i> Contact Support
+                    </a>
+                    <a href="{% url 'flow:faq_list' %}" class="btn btn-outline-secondary ml-2">
+                        <i class="fa fa-search"></i> Browse More FAQs
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <!-- Related FAQs -->
+            {% if related_faqs %}
+            <div class="related-faqs">
+                <h5 class="mb-3">
+                    <i class="fa fa-lightbulb"></i> Related Questions
+                </h5>
+                {% for related_faq in related_faqs %}
+                    <div class="related-faq-item">
+                        <a href="{% url 'flow:faq_detail' related_faq.id %}">
+                            <strong>{{ related_faq.question }}</strong>
+                            <br>
+                            <small class="text-muted">{{ related_faq.category.name }}</small>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- Quick Actions -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fa fa-bolt"></i> Quick Actions
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'flow:faq_list' %}" class="list-group-item list-group-item-action">
+                            <i class="fa fa-list"></i> All FAQs
+                        </a>
+                        <a href="{% url 'flow:faq_list' %}?category={{ faq.category.id }}" 
+                           class="list-group-item list-group-item-action">
+                            <i class="fa fa-folder"></i> {{ faq.category.name }} FAQs
+                        </a>
+                        <a href="{% url 'flow:admin_contact' %}" class="list-group-item list-group-item-action">
+                            <i class="fa fa-question"></i> Ask a Question
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Smooth scroll for anchor links
+    $('a[href^="#"]').on('click', function(event) {
+        var target = $(this.getAttribute('href'));
+        if( target.length ) {
+            event.preventDefault();
+            $('html, body').stop().animate({
+                scrollTop: target.offset().top - 100
+            }, 1000);
+        }
+    });
+});
+</script>
+{% endblock %}
