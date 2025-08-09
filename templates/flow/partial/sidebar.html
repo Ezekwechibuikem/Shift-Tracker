@@ -62,7 +62,7 @@
                     </a>
                 </div>
             {% endif %}
-            {% if user.is_supervisor %}
+            {% if user.is_supervisor or user.is_admin %}
             <div class="menu-item pt-5px">
                 <a href="{% url 'flow:supervisor_team' %}" class="menu-link">
                     <div class="menu-icon">

@@ -10,18 +10,36 @@ class ScheduleGenerator:
         self.start_date = start_date
         self.end_date = start_date + timedelta(days=6)
 
-    def assign_off_days(self, team_members):
-        """Assign one off day per staff member in a team per week, but one staff member within the team must be present each day."""
+    def assign_off_days_evenly(self, staff_members):
+        """
+        Assign one off day per staff member from Monday to Saturday,
+        ensuring no more than 2 staff members are off on any given day.
+        """
         available_days = list(range(0, 6))  # Monday(0) to Saturday(5)
         assignments = {}
+        day_counts = {day: 0 for day in available_days}  # Track how many staff off each day
         
-        # Randomly assign different off days to each team member
-        for staff in team_members:
-            if available_days:
-                off_day = random.choice(available_days)
-                available_days.remove(off_day)
-                assignments[staff.id] = off_day
+        # Shuffle staff list for random assignment
+        staff_list = list(staff_members)
+        random.shuffle(staff_list)
+        
+        # First pass: assign off days while respecting the 2-person limit
+        for staff in staff_list:
+            # Find days with the least number of people off (under the limit of 2)
+            available_days_under_limit = [day for day in available_days if day_counts[day] < 2]
             
+            if available_days_under_limit:
+                # Choose the day with the fewest people off
+                chosen_day = min(available_days_under_limit, key=lambda d: day_counts[d])
+                assignments[staff.id] = chosen_day
+                day_counts[chosen_day] += 1
+            else:
+                # If all days have 2 people off, assign to a random day anyway
+                # This handles cases where there are more than 12 staff members
+                chosen_day = random.choice(available_days)
+                assignments[staff.id] = chosen_day
+                day_counts[chosen_day] += 1
+        
         return assignments
 
     @transaction.atomic
@@ -33,43 +51,35 @@ class ScheduleGenerator:
             is_published=True
         )
 
-        # Get all staff members under this supervisor
+        # Get all staff members under this supervisor in the same department
         staff_members = CustomUser.objects.filter(
             assigned_supervisor__supervisor=self.supervisor,
-            role='STAFF'
-        ).order_by('team', 'first_name')
+            role='STAFF',
+            department=self.supervisor.department  # Only staff in same department
+        ).order_by('first_name')
 
-        # Group staff by teams
-        teams = {}
-        for staff in staff_members:
-            if staff.team not in teams:
-                teams[staff.team] = []
-            teams[staff.team].append(staff)
+        # Assign off days for all staff members evenly
+        staff_off_days = self.assign_off_days_evenly(staff_members)
 
-        # Assign off days for each team
-        team_off_days = {}
-        for team_name, team_members in teams.items():
-            team_off_days[team_name] = self.assign_off_days(team_members)
-
-        # Generate shifts for the week
+        # Generate shifts for the week (Monday to Sunday)
         for current_date in (self.start_date + timedelta(n) for n in range(7)):
             day_of_week = current_date.weekday()
             
             # Create shifts for all staff
-            for team_name, team_members in teams.items():
-                for staff in team_members:
-                    is_off = False
-                    
-                    # Check if it's this staff member's off day
-                    if day_of_week != 6:  # Not Sunday
-                        staff_off_day = team_off_days[team_name].get(staff.id)
-                        is_off = (day_of_week == staff_off_day)
-                    
-                    StaffShift.objects.create(
-                        schedule=schedule,
-                        staff=staff,
-                        date=current_date,
-                        is_off_day=is_off
-                    )
+            for staff in staff_members:
+                is_off = False
+                
+                # Check if it's this staff member's off day
+                if day_of_week != 6:  # Not Sunday (Sunday is mandatory workday)
+                    staff_off_day = staff_off_days.get(staff.id)
+                    is_off = (day_of_week == staff_off_day)
+                # If it's Sunday (day_of_week == 6), is_off remains False
+                
+                StaffShift.objects.create(
+                    schedule=schedule,
+                    staff=staff,
+                    date=current_date,
+                    is_off_day=is_off
+                )
 
         return schedule

@@ -45,7 +45,7 @@ class SupervisorAssignmentForm(forms.Form):
 class WeeklyScheduleGenerationForm(forms.Form):
     start_date = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date'}),
-        help_text=mark_safe('<span style="color: red;">Schedule must start on a Sunday</span>')
+        help_text=mark_safe('<span style="color: black; font-size: 18px; font-weight: bold;">Schedule must start on a sunday</span>')
     )
 
     def clean_start_date(self):

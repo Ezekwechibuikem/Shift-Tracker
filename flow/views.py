@@ -193,6 +193,11 @@ def generate_schedule(request):
             try:
                 start_date = form.cleaned_data['start_date']
                 
+                # Check if start_date is a Monday
+                if start_date.weekday() != 0:
+                    messages.error(request, "Schedule must start on a Monday.")
+                    return render(request, 'flow/generate_schedule.html', {'form': form})
+                
                 existing_schedule = WeeklySchedule.objects.filter(
                     supervisor=request.user,
                     start_date=start_date
@@ -202,13 +207,24 @@ def generate_schedule(request):
                     messages.warning(request, "A schedule already exists for this week.")
                     return redirect('flow:view_schedule', schedule_id=existing_schedule.id)
                 
+                # Check if supervisor has staff in their department
+                staff_count = CustomUser.objects.filter(
+                    assigned_supervisor__supervisor=request.user,
+                    role='STAFF',
+                    department=request.user.department
+                ).count()
+                
+                if staff_count == 0:
+                    messages.error(request, "No staff members found in your department to schedule.")
+                    return render(request, 'flow/generate_schedule.html', {'form': form})
+                
                 generator = ScheduleGenerator(request.user, start_date)
                 schedule = generator.generate_schedule()
 
                 # Store success message in session for Gritter
                 request.session['gritter_message'] = {
                     'title': 'Success!',
-                    'message': f'Schedule generated for week of {start_date.strftime("%B %d, %Y")}',
+                    'message': f'Schedule generated for week of {start_date.strftime("%B %d, %Y")} for {staff_count} staff members in {request.user.department} department',
                     'type': 'success'
                 }
                 
@@ -217,10 +233,11 @@ def generate_schedule(request):
             except Exception as e:
                 messages.error(request, f"Error generating schedule: {str(e)}")
     else:
-        next_sunday = timezone.now().date()
-        while next_sunday.weekday() != 6:
-            next_sunday += timedelta(days=1)
-        form = WeeklyScheduleGenerationForm(initial={'start_date': next_sunday})
+        # Find the next Monday as the default start date
+        next_monday = timezone.now().date()
+        while next_monday.weekday() != 0:
+            next_monday += timedelta(days=1)
+        form = WeeklyScheduleGenerationForm(initial={'start_date': next_monday})
     
     context = {
         'form': form,
