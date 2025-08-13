@@ -183,66 +183,67 @@ def team_staff_list(request):
 
 @login_required
 def generate_schedule(request):
+    # Check permission
     if not request.user.is_supervisor():
         messages.error(request, "Access denied. Supervisor privileges required.")
         return redirect('authentication:home')
-    
+
+    # Get all staff for this supervisor in the same department
+    staff_members = CustomUser.objects.filter(
+        assigned_supervisor__supervisor=request.user,
+        role='STAFF',
+        department=request.user.department
+    )
+
+    # If no staff found, exit early
+    if not staff_members.exists():
+        messages.error(request, "No staff members found in your department to schedule.")
+        return redirect('authentication:home')
+
     if request.method == 'POST':
         form = WeeklyScheduleGenerationForm(request.POST)
         if form.is_valid():
             try:
                 start_date = form.cleaned_data['start_date']
-                
-                # Check if start_date is a Monday
+
+                # Ensure start_date is a Monday (0 = Monday, 6 = Sunday)
                 if start_date.weekday() != 0:
                     messages.error(request, "Schedule must start on a Monday.")
                     return render(request, 'flow/generate_schedule.html', {'form': form})
-                
+
+                # Check if schedule for this week already exists
                 existing_schedule = WeeklySchedule.objects.filter(
                     supervisor=request.user,
                     start_date=start_date
                 ).first()
-                
                 if existing_schedule:
                     messages.warning(request, "A schedule already exists for this week.")
                     return redirect('flow:view_schedule', schedule_id=existing_schedule.id)
-                
-                # Check if supervisor has staff in their department
-                staff_count = CustomUser.objects.filter(
-                    assigned_supervisor__supervisor=request.user,
-                    role='STAFF',
-                    department=request.user.department
-                ).count()
-                
-                if staff_count == 0:
-                    messages.error(request, "No staff members found in your department to schedule.")
-                    return render(request, 'flow/generate_schedule.html', {'form': form})
-                
+
+                # 3️⃣ Generate the schedule using only the retrieved staff
                 generator = ScheduleGenerator(request.user, start_date)
-                schedule = generator.generate_schedule()
+                schedule = generator.generate_schedule_for_staff(staff_members)  # ← custom method
 
                 # Store success message in session for Gritter
                 request.session['gritter_message'] = {
                     'title': 'Success!',
-                    'message': f'Schedule generated for week of {start_date.strftime("%B %d, %Y")} for {staff_count} staff members in {request.user.department} department',
+                    'message': f'Schedule generated for week of {start_date.strftime("%B %d, %Y")} '
+                               f'for {staff_members.count()} staff members in {request.user.department} department',
                     'type': 'success'
                 }
-                
                 return redirect('flow:view_schedule', schedule_id=schedule.id)
-            
+
             except Exception as e:
                 messages.error(request, f"Error generating schedule: {str(e)}")
+
     else:
-        # Find the next Monday as the default start date
+        # Default start date = next Monday
         next_monday = timezone.now().date()
         while next_monday.weekday() != 0:
             next_monday += timedelta(days=1)
         form = WeeklyScheduleGenerationForm(initial={'start_date': next_monday})
-    
-    context = {
-        'form': form,
-    }
-    return render(request, 'flow/generate_schedule.html', context)
+
+    return render(request, 'flow/generate_schedule.html', {'form': form})
 
 @login_required
 def view_schedule(request, schedule_id=None):
