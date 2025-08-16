@@ -129,6 +129,14 @@
                     <div class="menu-text">Manage Holidays</div>
                 </a>
             </div>
+            <div class="menu-item pt-5px">
+                <a href="{% url 'flow:check_holidays' %}" class="menu-link">
+                    <div class="menu-icon">
+                        <i class="fa fa-calendar-day"></i>
+                    </div>
+                    <div class="menu-text">Check Holidays</div>
+                </a>
+            </div>
         {% endif %}
         <div class="menu-item">
             <a href="{% url 'authentication:intro' %}" class="menu-link">

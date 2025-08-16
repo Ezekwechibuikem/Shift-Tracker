@@ -1,0 +1,93 @@
+{% extends 'flow/base.html' %}
+
+{% block content %}
+<ol class="breadcrumb float-xl-end">
+    <li class="breadcrumb-item"><a href="{% url 'authentication:home' %}">Home</a></li>
+    <li class="breadcrumb-item active">Add Holiday</a></li>
+    {% comment %} <li class="breadcrumb-item active">General</li> {% endcomment %}
+</ol>
+
+<!-- check_holidays.html -->
+<div class="container">
+    <h2>Holiday Checker</h2>
+    
+    <!-- Always show the button -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-search"></i> Check Holidays This Week
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Only show results if button was clicked (POST request) -->
+    {% if request.method == 'POST' %}
+    <div class="card mb-4" id="results-section">
+        <div class="card-header">
+            <h4>Results for Week: {{ upcoming_sunday }} to {{ week_end }}</h4>
+        </div>
+        <div class="card-body">
+            {% if week_holidays %}
+                {% for holiday in week_holidays %}
+                <div class="alert alert-success">
+                    <strong>{{ holiday.localName }}</strong><br>
+                    <small>Date: {{ holiday.date }}</small>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="fa fa-info-circle"></i> No public holidays found for this week.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Show database holidays only after checking -->
+    <div class="card">
+        <div class="card-header">
+            <h4>All Holidays in Database</h4>
+        </div>
+        <div class="card-body">
+            {% if all_holidays %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Holiday Name</th>
+                                <th>Date</th>
+                                <th>Added By</th>
+                                <th>Added On</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for holiday in all_holidays %}
+                            <tr>
+                                <td>{{ holiday.name }}</td>
+                                <td>{{ holiday.date|date:"M d, Y" }}</td>
+                                <td>
+                                    {% if holiday.created_by %}
+                                        {{ holiday.created_by.get_full_name }}
+                                    {% else %}
+                                        <span class="text-muted">Unknown</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ holiday.created_at|date:"M d, Y g:i A" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-warning">
+                    No holidays in database yet.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

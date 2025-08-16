@@ -17,6 +17,7 @@ urlpatterns = [
     path('schedule/edit/<int:schedule_id>/', views.edit_schedule, name='edit_schedule'),
     path('holidays/', views.manage_holidays, name='manage_holidays'),
     path('attendance/', views.check_attendance, name='check_attendance'),
+    path('check-holidays/', views.check_public_holidays, name='check_holidays'),
     
     path('clear-message/', views.clear_message, name='clear_message'),
     

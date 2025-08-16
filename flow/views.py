@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+import requests 
+import datetime
 from django.db.models import Q
 from django.core.paginator import Paginator
 # from django.urls import reverse
@@ -13,6 +15,7 @@ from .forms import SupervisorAssignmentForm, WeeklyScheduleGenerationForm, Holid
 from .utils import ScheduleGenerator
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from datetime import date, timedelta
 
 
 @login_required
@@ -305,6 +308,75 @@ def view_schedule(request, schedule_id=None):
         print(f"Error: {str(e)}")
         messages.error(request, f"Error viewing schedule: {str(e)}")
         return redirect('authentication:home')
+
+@login_required
+def check_public_holidays(request):
+    if not request.user.is_supervisor():
+        messages.error(request, "Access denied. Supervisor privileges required.")
+        return redirect('authentication:home')
+
+    today = timezone.now().date()
+    days_until_sunday = (6 - today.weekday()) % 7
+    upcoming_sunday = today + timedelta(days=days_until_sunday)
+    week_end = upcoming_sunday + timedelta(days=6)
+   
+    year = upcoming_sunday.year
+    url = f"https://date.nager.at/api/v3/PublicHolidays/{year}/NG"
+    
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        holidays_data = response.json()
+    except requests.RequestException:
+        messages.error(request, "Error fetching public holidays. Please try again.")
+        return render(request, 'flow/check_holidays.html')
+
+    week_holidays = [
+        h for h in holidays_data
+        if upcoming_sunday <= datetime.date.fromisoformat(h['date']) <= week_end
+    ]
+
+    if week_holidays:
+        saved_count = 0
+        for h in week_holidays:
+            date_obj = datetime.date.fromisoformat(h['date'])
+            holiday_obj, created = Holiday.objects.get_or_create(
+                name=h['localName'],
+                date=date_obj,
+                defaults={'created_by': request.user}
+            )
+            # UPDATE: Always set created_by if it's None
+            if holiday_obj.created_by is None:
+                holiday_obj.created_by = request.user
+                holiday_obj.save()
+            
+            if created:
+                saved_count += 1
+        messages.success(request, f"Found and saved {saved_count} holiday(s) for the week.")
+    else:
+        # FIXED: Handle "No holiday" case properly
+        holiday_obj, created = Holiday.objects.get_or_create(
+            name="No holiday",
+            date=upcoming_sunday,
+            defaults={'created_by': request.user}
+        )
+        
+        # If the holiday already existed but has no created_by, update it
+        if holiday_obj.created_by is None:
+            holiday_obj.created_by = request.user
+            holiday_obj.save()
+            
+        messages.info(request, "No public holidays found for that week.")
+
+    # Get all holidays for display
+    all_holidays = Holiday.objects.all().order_by('date')
+    
+    return render(request, 'flow/check_holidays.html', {
+        'week_holidays': week_holidays,
+        'upcoming_sunday': upcoming_sunday,
+        'week_end': week_end,
+        'all_holidays': all_holidays,
+    })
     
 @login_required
 def manage_holidays(request):
