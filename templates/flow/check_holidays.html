@@ -3,8 +3,7 @@
 {% block content %}
 <ol class="breadcrumb float-xl-end">
     <li class="breadcrumb-item"><a href="{% url 'authentication:home' %}">Home</a></li>
-    <li class="breadcrumb-item active">Add Holiday</a></li>
-    {% comment %} <li class="breadcrumb-item active">General</li> {% endcomment %}
+    <li class="breadcrumb-item active">Check Holidays</li>
 </ol>
 
 <!-- check_holidays.html -->
@@ -23,8 +22,8 @@
         </div>
     </div>
 
-    <!-- Only show results if button was clicked (POST request) -->
-    {% if request.method == 'POST' %}
+    <!-- Only show results if button was clicked (POST request) - appears between button and history -->
+    {% if request.method == 'POST' or holidays_checked %}
     <div class="card mb-4" id="results-section">
         <div class="card-header">
             <h4>Results for Week: {{ upcoming_sunday }} to {{ week_end }}</h4>
@@ -45,15 +44,29 @@
         </div>
     </div>
 
-    <!-- Show database holidays only after checking -->
-    <div class="card">
-        <div class="card-header">
+    <!-- Continue to Schedule Generation Button -->
+    {% if show_continue_to_schedule %}
+    <div class="card mb-4">
+        <div class="card-body text-center">
+            <h5 class="card-title">Ready to Generate Schedule</h5>
+            <p class="card-text">You have reviewed the holidays for this week. You can now proceed to generate the schedule.</p>
+            <a href="{% url 'flow:generate_schedule' %}?holidays_checked=1" class="btn btn-success btn-lg">
+                <i class="fas fa-calendar-plus"></i> Continue to Schedule Generation
+            </a>
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    <!-- Always show database holidays (history) -->
+    <div class="card mb-4">
+        <div class="card-header mb-2">
             <h4>All Holidays in Database</h4>
         </div>
         <div class="card-body">
             {% if all_holidays %}
                 <div class="table-responsive">
-                    <table class="table table-striped">
+                    <table id="data-table-combine" class="table table-striped table-bordered align-middle">
                         <thead>
                             <tr>
                                 <th>Holiday Name</th>
@@ -87,7 +100,17 @@
             {% endif %}
         </div>
     </div>
-    {% endif %}
+
+    <!-- Refresh button at the bottom -->
+    <div class="card">
+        <div class="card-body text-center">
+            <form method="GET">
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="fa fa-refresh"></i> Refresh Holiday Check
+                </button>
+            </form>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

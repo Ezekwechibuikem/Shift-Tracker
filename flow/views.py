@@ -186,9 +186,20 @@ def team_staff_list(request):
 
 @login_required
 def generate_schedule(request):
+    # Check if user is supervisor
     if not request.user.is_supervisor():
+        # Non-supervisor - redirect to home page
         messages.error(request, "Access denied. Supervisor privileges required.")
         return redirect('authentication:home')
+    
+    # Check if this is the initial request (supervisor hasn't checked holidays yet)
+    if not request.GET.get('holidays_checked') and not request.session.get('holidays_checked'):
+        # Supervisor - redirect to holiday check page first
+        return redirect('flow:check_holidays')
+    
+    # Clear the session flag after using it
+    if request.session.get('holidays_checked'):
+        del request.session['holidays_checked']
     
     if request.method == 'POST':
         form = WeeklyScheduleGenerationForm(request.POST)
@@ -246,6 +257,7 @@ def generate_schedule(request):
         'form': form,
     }
     return render(request, 'flow/generate_schedule.html', context)
+
 
 @login_required
 def view_schedule(request, schedule_id=None):
@@ -371,12 +383,19 @@ def check_public_holidays(request):
     # Get all holidays for display
     all_holidays = Holiday.objects.all().order_by('date')
     
-    return render(request, 'flow/check_holidays.html', {
+    # Check if this request came from generate_schedule redirect
+    # Set session flag to indicate holidays have been checked
+    request.session['holidays_checked'] = True
+    
+    context = {
         'week_holidays': week_holidays,
         'upcoming_sunday': upcoming_sunday,
         'week_end': week_end,
         'all_holidays': all_holidays,
-    })
+        'show_continue_to_schedule': True,  # Flag to show "Continue to Schedule" button
+    }
+    
+    return render(request, 'flow/check_holidays.html', context)
     
 @login_required
 def manage_holidays(request):

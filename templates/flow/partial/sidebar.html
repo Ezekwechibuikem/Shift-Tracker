@@ -104,6 +104,14 @@
         {% endif %}
         {% if user.is_supervisor or user.is_admin %}
             <div class="menu-item pt-5px">
+                <a href="{% url 'flow:check_holidays' %}" class="menu-link">
+                    <div class="menu-icon">
+                        <i class="fa fa-check-circle"></i>
+                    </div>
+                    <div class="menu-text">Check Holidays</div>
+                </a>
+            </div>
+            <div class="menu-item pt-5px">
                 <a href="{% url 'flow:current_schedule' %}" class="menu-link">
                     <div class="menu-icon">
                         <i class="fa fa-calendar-week"></i>
@@ -111,8 +119,8 @@
                     <div class="menu-text">View All Schedule</div>
                 </a>
             </div>
-        {% endif %}
-        {% if user.is_supervisor or user.is_admin %}
+        {% comment %} {% endif %}
+        {% if user.is_supervisor or user.is_admin %} {% endcomment %}
             <div class="menu-item pt-5px">
                 <a href="{% url 'flow:generate_schedule' %}" class="menu-link">
                     <div class="menu-icon">
@@ -127,14 +135,6 @@
                         <i class="fa fa-calendar-day"></i>
                     </div>
                     <div class="menu-text">Manage Holidays</div>
-                </a>
-            </div>
-            <div class="menu-item pt-5px">
-                <a href="{% url 'flow:check_holidays' %}" class="menu-link">
-                    <div class="menu-icon">
-                        <i class="fa fa-calendar-day"></i>
-                    </div>
-                    <div class="menu-text">Check Holidays</div>
                 </a>
             </div>
         {% endif %}
